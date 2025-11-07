@@ -1,36 +1,36 @@
 import React, { useState } from "react";
 import {
-    Box,
-    Text,
-    Input,
-    InputField,
-    Button,
-    ButtonText,
-    VStack
-} from "@gluestack-ui/themed";
-import { useRouter } from "expo-router";
-import {
+    ImageBackground,
+    StyleSheet,
     TouchableOpacity,
     KeyboardAvoidingView,
     Platform,
-    StyleSheet,
     TouchableWithoutFeedback,
-    Keyboard
+    Keyboard,
+    View,
 } from "react-native";
+import {
+    Box,
+    Text,
+    Button,
+    ButtonText,
+    VStack,
+    HStack,
+} from "@gluestack-ui/themed";
 import { StatusBar } from "expo-status-bar";
-import { Ionicons } from "@expo/vector-icons"; // for eye icons
+import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
     const router = useRouter();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = () => {
-        if (username === "user" && password === "Password@123") {
-        } else {
-            console.warn("Invalid credentials!");
-        }
+        console.log("Log In pressed");
+    };
+
+    const handleSignUp = () => {
+        console.log("Sign Up pressed");
     };
 
     return (
@@ -38,71 +38,63 @@ export default function LoginScreen() {
             style={styles.container}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <StatusBar style="dark"/>
+            <StatusBar style="light" />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <Box flex={1} justifyContent="center" alignItems="center" p="$5">
-                    <VStack space="md" w="90%" alignItems="flex-start">
-                        <Text size="3xl" fontWeight="bold" color="$black">
-                            Log In
-                        </Text>
-                        <Text size="md" color="$coolGray500">
-                            Enter Explore & Enjoy
-                        </Text>
+                <ImageBackground
+                    source={require("../assets/images/my-image/home.jpg")}
+                    style={styles.background}
+                    resizeMode="cover"
+                >
+                    <View style={styles.overlay} />
 
-                        <Text size="md" color="$black">
-                            User Name
-                        </Text>
-                        <Input w="100%" size="lg" rounded="$2xl">
-                            <InputField
-                                placeholder="Username"
-                                value={username}
-                                onChangeText={setUsername}
-                            />
-                        </Input>
-
-                        <Text size="md" color="$black">
-                            Password
-                        </Text>
-                        <Input w="100%" size="lg" rounded="$2xl">
-                            <InputField
-                                placeholder="Password"
-                                secureTextEntry={!showPassword} // toggle visibility
-                                value={password}
-                                onChangeText={setPassword}
-                            />
-                            <TouchableOpacity
-                                style={styles.icon}
-                                onPress={() => setShowPassword(!showPassword)}
+                    <Box flex={1} justifyContent="flex-end" p="$5">
+                        <VStack space="lg" alignItems="center" mb="$10">
+                            <Text
+                                size="2xl"
+                                fontWeight="bold"
+                                textAlign="center"
+                                color="$white"
                             >
-                                <Ionicons
-                                    name={showPassword ? "eye-off" : "eye"}
-                                    size={24}
-                                    color="gray"
-                                />
-                            </TouchableOpacity>
-                        </Input>
-
-                        <Button
-                            w="100%"
-                            size="lg"
-                            onPress={handleLogin}
-                            rounded="$2xl"
-                        >
-                            <ButtonText color="$white">Log In</ButtonText>
-                        </Button>
-                    </VStack>
-
-                    <VStack p="$8" space="md" w="90%" alignItems="center">
-                        <TouchableOpacity>
-                            <Text size="sm" color="$blue600">
-                                Don't have an account?{" "}
-                                <Text alignItems="center" fontWeight="bold">
-                                    Sign Up
-                                </Text>
+                                Take Only Memories While Leaving Only Footprints
                             </Text>
-                        </TouchableOpacity>
-                    </VStack>
-                </Box>
+                            <Text size="md" color="$coolGray200" textAlign="center">
+                                Record your hike details and observations
+                            </Text>
+
+                            {/* Buttons Row */}
+                            <HStack
+                                w="100%"
+                                justifyContent="space-evenly"
+                                alignItems="center"
+                                mt="$5"
+                            >
+                                <Button
+                                    flex={1}
+                                    size="lg"
+                                    bg="$indigo600"
+                                    rounded="$2xl"
+                                    mx="$2"
+                                    onPress={handleLogin}
+                                >
+                                    <ButtonText color="$white">Log In</ButtonText>
+                                </Button>
+
+                                <Button
+                                    flex={1}
+                                    size="lg"
+                                    bg="$white"
+                                    rounded="$2xl"
+                                    borderColor="$indigo600"
+                                    borderWidth={1}
+                                    mx="$2"
+                                    onPress={handleSignUp}
+                                >
+                                    <ButtonText color="$indigo600">Sign Up</ButtonText>
+                                </Button>
+                            </HStack>
+                        </VStack>
+                    </Box>
+                </ImageBackground>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     );
@@ -112,10 +104,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    icon: {
-        position: "absolute",
-        right: 15,
-        top: "50%",
-        transform: [{translateY: -12}], // half of icon size (24 / 2)
+    background: {
+        flex: 1,
+        justifyContent: "flex-end",
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(0,0,0,0.3)", // soft dark overlay for readability
     },
 });
