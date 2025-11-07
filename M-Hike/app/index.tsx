@@ -27,7 +27,7 @@ export default function IndexScreen() {
     };
 
     const handleSignUp = () => {
-        console.log("Sign Up pressed");
+        router.push("/register");
     };
 
     return (
