@@ -6,11 +6,13 @@ import {
     TouchableOpacity,
     StyleSheet,
     Text,
-    SafeAreaView,
-    ScrollView,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -25,12 +27,15 @@ export default function LoginScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scroll}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+                <StatusBar style="dark" backgroundColor="#E0F0FF" />
+
                 <View style={styles.card}>
                     <Text style={styles.title}>Log In</Text>
                     <Text style={styles.subtitle}>
-                        Not a member yet? <Text style={styles.signup}>Sign up now</Text>
+                        Not a member yet?{" "}
+                        <Text style={styles.signup}>Sign up now</Text>
                     </Text>
 
                     <View style={styles.inputBox}>
@@ -40,6 +45,7 @@ export default function LoginScreen() {
                             placeholderTextColor="#6B7280"
                             value={username}
                             onChangeText={setUsername}
+                            returnKeyType="next"
                         />
                     </View>
 
@@ -51,6 +57,7 @@ export default function LoginScreen() {
                             keyboardType="email-address"
                             value={email}
                             onChangeText={setEmail}
+                            returnKeyType="next"
                         />
                     </View>
 
@@ -62,6 +69,7 @@ export default function LoginScreen() {
                             secureTextEntry={!showPassword}
                             value={password}
                             onChangeText={setPassword}
+                            returnKeyType="done"
                         />
                         <TouchableOpacity
                             style={styles.eyeIcon}
@@ -101,14 +109,18 @@ export default function LoginScreen() {
                         Privacy Policy
                     </Text>
                 </View>
-            </ScrollView>
-        </SafeAreaView>
+            </SafeAreaView>
+        </TouchableWithoutFeedback>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#E0F0FF" },
-    scroll: { flexGrow: 1, justifyContent: "center", alignItems: "center" },
+    container: {
+        flex: 1,
+        backgroundColor: "#E0F0FF",
+        justifyContent: "center",
+        alignItems: "center",
+    },
     card: {
         width: "85%",
         backgroundColor: "#fff",
