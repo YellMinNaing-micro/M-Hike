@@ -22,11 +22,8 @@ import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
     const router = useRouter();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-
     const handleLogin = () => {
-        console.log("Log In pressed");
+        router.push("/login");
     };
 
     const handleSignUp = () => {
