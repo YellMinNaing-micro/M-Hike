@@ -20,7 +20,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 
-export default function HomeScreen() {
+export default function IndexScreen() {
     const router = useRouter();
     const handleLogin = () => {
         router.push("/login");
