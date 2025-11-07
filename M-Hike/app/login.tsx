@@ -33,10 +33,12 @@ export default function LoginScreen() {
 
                 <View style={styles.card}>
                     <Text style={styles.title}>Log In</Text>
-                    <Text style={styles.subtitle}>
-                        Not a member yet?{" "}
-                        <Text style={styles.signup}>Sign up now</Text>
-                    </Text>
+                    <View style={styles.subtitleRow}>
+                        <Text style={styles.subtitle}>Not a member yet?{" "} </Text>
+                        <TouchableOpacity onPress={() => router.push("/register")}>
+                            <Text style={styles.signup}>Sign up now</Text>
+                        </TouchableOpacity>
+                    </View>
 
                     <View style={styles.inputBox}>
                         <TextInput
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: { fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 5 },
-    subtitle: { fontSize: 14, color: "#6B7280", marginBottom: 20 },
+    subtitle: { fontSize: 14, color: "#6B7280", marginBottom: 0 },
     signup: { color: "#4F46E5", fontWeight: "600" },
     inputBox: {
         width: "100%",
@@ -182,5 +184,10 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: "#9CA3AF",
         width: "90%",
+    },
+    subtitleRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 20,
     },
 });
