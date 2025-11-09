@@ -1,5 +1,5 @@
 // app/login.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     TextInput,
@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { getUserByCredentials } from "./database";
+import { getUserByCredentials, logAllUsers } from "./database";
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -30,6 +30,7 @@ export default function LoginScreen() {
         }
 
         try {
+            await logAllUsers();
             const user = await getUserByCredentials(username, email, password);
 
             if (user) {
