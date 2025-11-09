@@ -101,8 +101,6 @@ export default function EntryRecordScreen() {
                         </TouchableOpacity>
                     </View>
 
-
-
                     {/* Total Duration */}
                     <Text style={styles.label}>Total Duration (hours and minutes):</Text>
                     <View style={styles.durationContainer}>
@@ -144,16 +142,49 @@ export default function EntryRecordScreen() {
                     </View>
 
                     {/* Description */}
-                    <Text style={styles.label}>Description:</Text>
+                    <Text style={styles.label}>Description (optional):</Text>
                     <TextInput
                         style={[styles.input, styles.textArea]}
-                        placeholder="Enter description about the hike..."
+                        placeholder="Enter description related to the hike"
                         placeholderTextColor="#9CA3AF"
                         multiline
                         numberOfLines={4}
                         value={description}
                         onChangeText={setDescription}
                     />
+
+                    {/* Add Observations */}
+                    <Text style={[styles.label, { marginTop: 20 }]}>Add Observations:</Text>
+
+                    <View style={styles.observationBox}>
+                        <Text style={styles.observationLabel}>Animal Sightings:</Text>
+                        <TextInput
+                            style={styles.observationInput}
+                            placeholder="Animal sights during hike"
+                            placeholderTextColor="#9CA3AF"
+                        />
+
+                        <Text style={styles.observationLabel}>Types of Vegetation:</Text>
+                        <TextInput
+                            style={styles.observationInput}
+                            placeholder="Vegetation types encountered during hike"
+                            placeholderTextColor="#9CA3AF"
+                        />
+
+                        <Text style={styles.observationLabel}>Weather Condition:</Text>
+                        <TextInput
+                            style={styles.observationInput}
+                            placeholder="Weather condition during hike"
+                            placeholderTextColor="#9CA3AF"
+                        />
+
+                        <Text style={styles.observationLabel}>Trail Condition:</Text>
+                        <TextInput
+                            style={styles.observationInput}
+                            placeholder="Trail condition during hike"
+                            placeholderTextColor="#9CA3AF"
+                        />
+                    </View>
 
                     {/* Submit Button */}
                     <TouchableOpacity style={styles.submitButton}>
@@ -276,6 +307,31 @@ const styles = StyleSheet.create({
     },
     durationInput: {
         flex: 1,
+    },
+    observationBox: {
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        borderRadius: 12,
+        padding: 12,
+        marginTop: 8,
+        backgroundColor: "#F9FAFB",
+    },
+    observationLabel: {
+        fontSize: 14,
+        fontWeight: "500",
+        color: "#111827",
+        marginTop: 10,
+        marginBottom: 4,
+    },
+    observationInput: {
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        fontSize: 14,
+        color: "#111827",
+        backgroundColor: "#fff",
     },
     submitButton: {
         backgroundColor: "#2563EB",
