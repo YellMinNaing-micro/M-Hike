@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -16,6 +16,15 @@ export default function EntryRecordScreen() {
     const [parkingAvailable, setParkingAvailable] = useState(true);
     const [difficulty, setDifficulty] = useState("Easy");
     const [description, setDescription] = useState("");
+    const [timeOfObservation, setTimeOfObservation] = useState("");
+    const [additionalComments, setAdditionalComments] = useState("");
+
+    // Automatically set today's date and time
+    useEffect(() => {
+        const now = new Date();
+        const formatted = now.toLocaleString(); // e.g. "11/09/2025, 1:45 PM"
+        setTimeOfObservation(formatted);
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -185,6 +194,30 @@ export default function EntryRecordScreen() {
                             placeholderTextColor="#9CA3AF"
                         />
                     </View>
+
+                    {/* Time of Observation */}
+                    <Text style={[styles.label, { marginTop: 20 }]}>
+                        Time of Observation:
+                    </Text>
+                    <TextInput
+                        style={styles.input}
+                        value={timeOfObservation}
+                        onChangeText={setTimeOfObservation}
+                        placeholder="Auto-filled with current date and time"
+                        placeholderTextColor="#9CA3AF"
+                    />
+
+                    {/* Additional Comments */}
+                    <Text style={styles.label}>Additional Comments (optional):</Text>
+                    <TextInput
+                        style={[styles.input, styles.textArea]}
+                        placeholder="Enter any additional comments..."
+                        placeholderTextColor="#9CA3AF"
+                        multiline
+                        numberOfLines={3}
+                        value={additionalComments}
+                        onChangeText={setAdditionalComments}
+                    />
 
                     {/* Submit Button */}
                     <TouchableOpacity style={styles.submitButton}>
