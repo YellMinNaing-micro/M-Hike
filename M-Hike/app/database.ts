@@ -1,29 +1,30 @@
+// database.ts
 import * as SQLite from "expo-sqlite";
 
-const db = SQLite.openDatabaseSync("userdb.db");
+let db: SQLite.SQLiteDatabase | null = null;
 
-// ✅ Create table (once)
-db.execAsync(`
-    CREATE TABLE IF NOT EXISTS users (
-                                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                         username TEXT NOT NULL,
-                                         email TEXT NOT NULL,
-                                         password TEXT NOT NULL
-    );
-`);
-
-export type User = {
-    id: number;
-    username: string;
-    email: string;
-    password: string;
+// ✅ Open or create DB and ensure table exists
+export const openDB = async (): Promise<SQLite.SQLiteDatabase> => {
+    if (!db) {
+        db = await SQLite.openDatabaseAsync("m-hike.db");
+        await db.execAsync(`
+            CREATE TABLE IF NOT EXISTS users (
+                                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                 username TEXT NOT NULL,
+                                                 email TEXT NOT NULL,
+                                                 password TEXT NOT NULL
+            );
+        `);
+    }
+    return db;
 };
 
 // ✅ Insert user
 export const insertUser = async (username: string, email: string, password: string) => {
     try {
-        await db.runAsync(
-            "INSERT INTO users (username, email, password) VALUES (?, ?, ?);",
+        const database = await openDB();
+        await database.runAsync(
+            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
             [username, email, password]
         );
         console.log("✅ User inserted successfully");
@@ -33,49 +34,46 @@ export const insertUser = async (username: string, email: string, password: stri
 };
 
 // ✅ Get all users
-export const getAllUsers = async (): Promise<User[]> => {
-    const result = await db.getAllAsync<User>("SELECT * FROM users;");
+export const getAllUsers = async () => {
+    const database = await openDB();
+    const result = await database.getAllAsync("SELECT * FROM users;");
+    console.log("👥 All users:", result);
     return result;
 };
 
-// ✅ Get user by credentials
+// ✅ Get single user by credentials
 export const getUserByCredentials = async (
     username: string,
     email: string,
     password: string
-): Promise<User | null | undefined> => {
-    try {
-        const result = await db.getFirstAsync<User>(
-            "SELECT * FROM users WHERE username = ? AND email = ? AND password = ?;",
-            [username, email, password]
-        );
-        return result;
-    } catch (error) {
-        console.error("❌ Error fetching user:", error);
-        return null; // ✅ now valid
-    }
+) => {
+    const database = await openDB();
+    const result = await database.getFirstAsync(
+        "SELECT * FROM users WHERE username = ? AND email = ? AND password = ?;",
+        [username, email, password]
+    );
+    return result ?? null;
 };
 
+// ✅ Update password
 export const updatePassword = async (username: string, email: string, newPassword: string) => {
     try {
-        const user = await db.getFirstAsync(
-            "SELECT * FROM users WHERE username = ? AND email = ?;",
-            [username, email]
-        );
-
-        if (!user) return false; // user not found
-
-        await db.runAsync(
+        const database = await openDB();
+        await database.runAsync(
             "UPDATE users SET password = ? WHERE username = ? AND email = ?;",
             [newPassword, username, email]
         );
-
+        console.log("🔑 Password updated successfully");
         return true;
     } catch (error) {
-        console.error("Error updating password:", error);
+        console.error("❌ Error updating password:", error);
         return false;
     }
 };
 
-
-export default db;
+// ✅ Log all users (debug helper)
+export const logAllUsers = async () => {
+    const users = await getAllUsers();
+    console.log("📋 All Users in DB:", users);
+    return users;
+};
