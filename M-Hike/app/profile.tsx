@@ -7,17 +7,20 @@ import {
     TouchableOpacity,
     StyleSheet,
     ScrollView,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { getAllUsers } from "../lib/database";
+import { getAllUsers, updateUser } from "../lib/database";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function ProfileScreen() {
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
+    const [isEditing, setIsEditing] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
+    // Load user from DB
     useEffect(() => {
         const loadUser = async () => {
             const users = await getAllUsers();
@@ -26,15 +29,35 @@ export default function ProfileScreen() {
         loadUser();
     }, []);
 
+    // Save updated user
+    const handleSave = async () => {
+        if (!user) return;
+        if (!user.username || !user.email || !user.password) {
+            Alert.alert("Error", "Please fill in all fields");
+            return;
+        }
+
+        const success = await updateUser(user);
+        if (success) {
+            Alert.alert("Success", "Profile updated successfully");
+            setIsEditing(false);
+        } else {
+            Alert.alert("Error", "Failed to update profile");
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             {/* HEADER */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
-                    <Ionicons name="arrow-back-outline" size={26} color="#111827"/>
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={styles.iconButton}
+                >
+                    <Ionicons name="arrow-back-outline" size={26} color="#111827" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Profile</Text>
-                <View style={{width: 26}}/>
+                <View style={{ width: 26 }} />
             </View>
 
             {/* CONTENT */}
@@ -46,14 +69,18 @@ export default function ProfileScreen() {
                             <TextInput
                                 style={styles.input}
                                 value={user.username?.toString() || ""}
-                                editable={false}
+                                editable={isEditing}
+                                onChangeText={(text) => setUser({ ...user, username: text })}
+                                placeholder="Username"
                             />
 
                             {/* Email */}
                             <TextInput
                                 style={styles.input}
                                 value={user.email?.toString() || ""}
-                                editable={false}
+                                editable={isEditing}
+                                onChangeText={(text) => setUser({ ...user, email: text })}
+                                placeholder="Email"
                             />
 
                             {/* Password with eye icon */}
@@ -61,7 +88,8 @@ export default function ProfileScreen() {
                                 <TextInput
                                     style={styles.passwordInput}
                                     value={user.password?.toString() || ""}
-                                    editable={false}
+                                    editable={isEditing}
+                                    onChangeText={(text) => setUser({ ...user, password: text })}
                                     secureTextEntry={!showPassword}
                                     placeholder="Password"
                                     placeholderTextColor="#9CA3AF"
@@ -81,12 +109,26 @@ export default function ProfileScreen() {
                             {/* Buttons */}
                             <TouchableOpacity
                                 style={styles.button}
-                                onPress={() => router.push("/home")}>
+                                onPress={() => router.push("/home")}
+                            >
                                 <Text style={styles.buttonText}>Show All Hike Records</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.button}>
-                                <Text style={styles.buttonText}>Edit Profile</Text>
+
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={() => {
+                                    if (isEditing) {
+                                        handleSave();
+                                    } else {
+                                        setIsEditing(true);
+                                    }
+                                }}
+                            >
+                                <Text style={styles.buttonText}>
+                                    {isEditing ? "Save Profile" : "Edit Profile"}
+                                </Text>
                             </TouchableOpacity>
+
                             <TouchableOpacity
                                 style={styles.button}
                                 onPress={() => router.push("/login")}
@@ -121,7 +163,7 @@ const styles = StyleSheet.create({
         color: "#111827",
     },
     iconButton: {
-        padding: 4, // ensures TouchableOpacity has some touch area
+        padding: 4,
     },
     scrollContent: {
         alignItems: "center",
