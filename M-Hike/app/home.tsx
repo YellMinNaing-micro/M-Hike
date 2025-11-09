@@ -37,7 +37,8 @@ export default function HomeScreen() {
                     <TouchableOpacity style={styles.iconButton} onPress={() => router.push("/profile")}>
                         <Ionicons name="person-circle-outline" size={26} color="#4F46E5" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => router.push("/entry-record")}
+                    >
                         <Ionicons name="add-circle-outline" size={26} color="#4F46E5" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
