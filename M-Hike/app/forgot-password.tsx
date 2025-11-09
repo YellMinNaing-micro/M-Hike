@@ -7,11 +7,13 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     Keyboard,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { updatePassword } from "./database";
 
 export default function ForgotPasswordScreen() {
     const router = useRouter();
@@ -20,9 +22,25 @@ export default function ForgotPasswordScreen() {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleReset = () => {
-        console.log("Reset password request sent");
-        router.push("/login");
+    const handleReset = async () => {
+        if (!username || !email || !password) {
+            Alert.alert("⚠️ Missing Fields", "Please fill all fields.");
+            return;
+        }
+
+        try {
+            const success = await updatePassword(username, email, password);
+            if (success) {
+                Alert.alert("✅ Password Reset Successful", "You can now log in.", [
+                    { text: "OK", onPress: () => router.push("/login") },
+                ]);
+            } else {
+                Alert.alert("❌ User Not Found", "Check your username and email.");
+            }
+        } catch (error) {
+            console.error("Error resetting password:", error);
+            Alert.alert("❌ Error", "Something went wrong. Try again.");
+        }
     };
 
     return (
