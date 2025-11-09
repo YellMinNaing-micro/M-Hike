@@ -1,5 +1,4 @@
-// app/entry-record.tsx
-import React from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -10,9 +9,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { Picker } from "@react-native-picker/picker"; // npm install @react-native-picker/picker
 
 export default function EntryRecordScreen() {
     const userName = "andy19";
+    const [parkingAvailable, setParkingAvailable] = useState(true);
+    const [difficulty, setDifficulty] = useState("Easy");
+    const [description, setDescription] = useState("");
 
     return (
         <SafeAreaView style={styles.container}>
@@ -63,13 +66,66 @@ export default function EntryRecordScreen() {
                     {/* Parking Availability */}
                     <Text style={styles.label}>Parking Availability:</Text>
                     <View style={styles.radioContainer}>
-                        <TouchableOpacity style={styles.radioButton}>
-                            <Text style={styles.radioText}>Yes</Text>
+                        <TouchableOpacity
+                            style={styles.radioButton}
+                            onPress={() => setParkingAvailable(true)}
+                        >
+                            <View style={styles.radioOuter}>
+                                {parkingAvailable && <View style={styles.radioInner} />}
+                            </View>
+                            <Text
+                                style={[
+                                    styles.radioText,
+                                    parkingAvailable && { fontWeight: "600", color: "#2563EB" },
+                                ]}
+                            >
+                                Yes
+                            </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.radioButton}>
-                            <Text style={styles.radioText}>No</Text>
+
+                        <TouchableOpacity
+                            style={styles.radioButton}
+                            onPress={() => setParkingAvailable(false)}
+                        >
+                            <View style={styles.radioOuter}>
+                                {!parkingAvailable && <View style={styles.radioInner} />}
+                            </View>
+                            <Text
+                                style={[
+                                    styles.radioText,
+                                    !parkingAvailable && { fontWeight: "600", color: "#2563EB" },
+                                ]}
+                            >
+                                No
+                            </Text>
                         </TouchableOpacity>
                     </View>
+
+                    {/* Level of Difficulty */}
+                    <Text style={styles.label}>Level of Difficulty:</Text>
+                    <View style={styles.pickerContainer}>
+                        <Picker
+                            selectedValue={difficulty}
+                            onValueChange={(itemValue) => setDifficulty(itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Easy" value="Easy" />
+                            <Picker.Item label="Moderate" value="Moderate" />
+                            <Picker.Item label="Hard" value="Hard" />
+                        </Picker>
+                    </View>
+
+                    {/* Description */}
+                    <Text style={styles.label}>Description:</Text>
+                    <TextInput
+                        style={[styles.input, styles.textArea]}
+                        placeholder="Enter description about the hike..."
+                        placeholderTextColor="#9CA3AF"
+                        multiline
+                        numberOfLines={4}
+                        value={description}
+                        onChangeText={setDescription}
+                    />
 
                     {/* Total Duration */}
                     <Text style={styles.label}>Total Duration (hours and minutes):</Text>
@@ -167,6 +223,10 @@ const styles = StyleSheet.create({
         color: "#111827",
         backgroundColor: "#fff",
     },
+    textArea: {
+        height: 100,
+        textAlignVertical: "top",
+    },
     radioContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -178,9 +238,34 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 6,
     },
+    radioOuter: {
+        height: 20,
+        width: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: "#2563EB",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    radioInner: {
+        height: 10,
+        width: 10,
+        borderRadius: 5,
+        backgroundColor: "#2563EB",
+    },
     radioText: {
         fontSize: 14,
         color: "#374151",
+    },
+    pickerContainer: {
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        borderRadius: 10,
+        overflow: "hidden",
+    },
+    picker: {
+        color: "#111827",
+        backgroundColor: "#fff",
     },
     durationContainer: {
         flexDirection: "row",
