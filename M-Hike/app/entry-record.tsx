@@ -10,22 +10,25 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Picker } from "@react-native-picker/picker";
-import { useRouter } from "expo-router"; // npm install @react-native-picker/picker
+import { useRouter } from "expo-router";
+import { getAllUsers } from "../lib/database";
 
 export default function EntryRecordScreen() {
     const router = useRouter();
-    const userName = "andy19";
+    const [user, setUser] = useState<any>(null);
     const [parkingAvailable, setParkingAvailable] = useState(true);
     const [difficulty, setDifficulty] = useState("Easy");
     const [description, setDescription] = useState("");
     const [timeOfObservation, setTimeOfObservation] = useState("");
     const [additionalComments, setAdditionalComments] = useState("");
 
-    // Automatically set today's date and time
+    // ✅ Fetch username from SQLite and auto-set observation time
     useEffect(() => {
-        const now = new Date();
-        const formatted = now.toLocaleString(); // e.g. "11/09/2025, 1:45 PM"
-        setTimeOfObservation(formatted);
+        const loadUser = async () => {
+            const users = await getAllUsers();
+            if (users && users.length > 0) setUser(users[0]);
+        };
+        loadUser();
     }, []);
 
     return (
@@ -35,7 +38,9 @@ export default function EntryRecordScreen() {
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Header */}
                 <View style={styles.headerBox}>
-                    <Text style={styles.welcomeText}>Welcome, {userName}!</Text>
+                    <Text style={styles.welcomeText}>
+                        Welcome, {user ? user.username : "Loading..."}!
+                    </Text>
                     <Text style={styles.headerTitle}>Add New Hike Record</Text>
                 </View>
 
@@ -166,69 +171,71 @@ export default function EntryRecordScreen() {
 
                     {/* Add Observations */}
                     <View style={styles.addObservationBox}>
-                    <Text style={[styles.label, { marginTop: 20 }]}>Add Observations:</Text>
+                        <Text style={[styles.label, { marginTop: 20 }]}>Add Observations:</Text>
 
-                    <View style={styles.observationBox}>
-                        <Text style={styles.observationLabel}>Animal Sightings:</Text>
+                        <View style={styles.observationBox}>
+                            <Text style={styles.observationLabel}>Animal Sightings:</Text>
+                            <TextInput
+                                style={styles.observationInput}
+                                placeholder="Animal sights during hike"
+                                placeholderTextColor="#9CA3AF"
+                            />
+
+                            <Text style={styles.observationLabel}>Types of Vegetation:</Text>
+                            <TextInput
+                                style={styles.observationInput}
+                                placeholder="Vegetation types encountered during hike"
+                                placeholderTextColor="#9CA3AF"
+                            />
+
+                            <Text style={styles.observationLabel}>Weather Condition:</Text>
+                            <TextInput
+                                style={styles.observationInput}
+                                placeholder="Weather condition during hike"
+                                placeholderTextColor="#9CA3AF"
+                            />
+
+                            <Text style={styles.observationLabel}>Trail Condition:</Text>
+                            <TextInput
+                                style={styles.observationInput}
+                                placeholder="Trail condition during hike"
+                                placeholderTextColor="#9CA3AF"
+                            />
+                        </View>
+
+                        {/* Time of Observation */}
+                        <Text style={[styles.label, { marginTop: 20 }]}>
+                            Time of Observation:
+                        </Text>
                         <TextInput
-                            style={styles.observationInput}
-                            placeholder="Animal sights during hike"
+                            style={styles.input}
+                            value={timeOfObservation}
+                            onChangeText={setTimeOfObservation}
+                            placeholder="Auto-filled with current date and time"
                             placeholderTextColor="#9CA3AF"
                         />
 
-                        <Text style={styles.observationLabel}>Types of Vegetation:</Text>
+                        {/* Additional Comments */}
+                        <Text style={styles.label}>Additional Comments (optional):</Text>
                         <TextInput
-                            style={styles.observationInput}
-                            placeholder="Vegetation types encountered during hike"
+                            style={[styles.input, styles.textArea]}
+                            placeholder="Enter any additional comments..."
                             placeholderTextColor="#9CA3AF"
+                            multiline
+                            numberOfLines={3}
+                            value={additionalComments}
+                            onChangeText={setAdditionalComments}
                         />
-
-                        <Text style={styles.observationLabel}>Weather Condition:</Text>
-                        <TextInput
-                            style={styles.observationInput}
-                            placeholder="Weather condition during hike"
-                            placeholderTextColor="#9CA3AF"
-                        />
-
-                        <Text style={styles.observationLabel}>Trail Condition:</Text>
-                        <TextInput
-                            style={styles.observationInput}
-                            placeholder="Trail condition during hike"
-                            placeholderTextColor="#9CA3AF"
-                        />
-                    </View>
-
-                    {/* Time of Observation */}
-                    <Text style={[styles.label, { marginTop: 20 }]}>
-                        Time of Observation:
-                    </Text>
-                    <TextInput
-                        style={styles.input}
-                        value={timeOfObservation}
-                        onChangeText={setTimeOfObservation}
-                        placeholder="Auto-filled with current date and time"
-                        placeholderTextColor="#9CA3AF"
-                    />
-
-                    {/* Additional Comments */}
-                    <Text style={styles.label}>Additional Comments (optional):</Text>
-                    <TextInput
-                        style={[styles.input, styles.textArea]}
-                        placeholder="Enter any additional comments..."
-                        placeholderTextColor="#9CA3AF"
-                        multiline
-                        numberOfLines={3}
-                        value={additionalComments}
-                        onChangeText={setAdditionalComments}
-                    />
-
                     </View>
 
                     {/* Submit Button */}
                     <TouchableOpacity style={styles.submitButton}>
                         <Text style={styles.submitText}>Save Record</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.showRecordButton}  onPress={() => router.push("/home")}>
+                    <TouchableOpacity
+                        style={styles.showRecordButton}
+                        onPress={() => router.push("/home")}
+                    >
                         <Text style={styles.submitText}>Show All Record</Text>
                     </TouchableOpacity>
                 </View>
