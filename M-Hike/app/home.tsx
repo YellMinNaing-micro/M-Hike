@@ -13,8 +13,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
+    const router = useRouter();
     const [showSearch, setShowSearch] = useState(false);
     const [search, setSearch] = useState("");
 
@@ -32,7 +34,7 @@ export default function HomeScreen() {
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Total Hike Records: 1</Text>
                 <View style={styles.headerIcons}>
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => router.push("/profile")}>
                         <Ionicons name="person-circle-outline" size={26} color="#4F46E5" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.iconButton}>
