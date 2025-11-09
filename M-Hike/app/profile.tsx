@@ -57,12 +57,15 @@ export default function ProfileScreen() {
                             />
 
                             {/* Password with eye icon */}
+                            {/* Password with eye icon */}
                             <View style={styles.passwordContainer}>
                                 <TextInput
-                                    style={[styles.input, { flex: 1, marginBottom: 0 }]}
+                                    style={styles.passwordInput}
                                     value={user.password?.toString() || ""}
                                     editable={false}
                                     secureTextEntry={!showPassword}
+                                    placeholder="Password"
+                                    placeholderTextColor="#9CA3AF"
                                 />
                                 <TouchableOpacity
                                     onPress={() => setShowPassword(!showPassword)}
@@ -146,14 +149,20 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         borderWidth: 1,
-        borderColor: "#D1D5DB",
-        borderRadius: 10,
-        paddingHorizontal: 10,
-        backgroundColor: "#F9FAFB",
-        marginBottom: 12,
+        borderColor: "#CBD5E1",
+        borderRadius: 12,
+        backgroundColor: "#F1F5F9",
+        paddingHorizontal: 12,
+        marginBottom: 20,
+    },
+    passwordInput: {
+        flex: 1,
+        paddingVertical: 12,
+        fontSize: 16,
+        color: "#111827",
     },
     eyeButton: {
-        paddingLeft: 10,
+        padding: 8,
     },
     button: {
         backgroundColor: "#111827",
