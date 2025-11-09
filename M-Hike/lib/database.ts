@@ -77,3 +77,19 @@ export const logAllUsers = async () => {
     console.log("📋 All Users in DB:", users);
     return users;
 };
+
+export const updateUser = async (user: { id: number, username: string, email: string, password: string }) => {
+    try {
+        const database = await openDB();
+        await database.runAsync(
+            "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?;",
+            [user.username, user.email, user.password, user.id]
+        );
+        console.log("✅ User updated successfully");
+        return true;
+    } catch (error) {
+        console.error("❌ Error updating user:", error);
+        return false;
+    }
+};
+
