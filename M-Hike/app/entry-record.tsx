@@ -9,9 +9,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Picker } from "@react-native-picker/picker"; // npm install @react-native-picker/picker
+import { Picker } from "@react-native-picker/picker";
+import { useRouter } from "expo-router"; // npm install @react-native-picker/picker
 
 export default function EntryRecordScreen() {
+    const router = useRouter();
     const userName = "andy19";
     const [parkingAvailable, setParkingAvailable] = useState(true);
     const [difficulty, setDifficulty] = useState("Easy");
@@ -226,7 +228,7 @@ export default function EntryRecordScreen() {
                     <TouchableOpacity style={styles.submitButton}>
                         <Text style={styles.submitText}>Save Record</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.showRecordButton}>
+                    <TouchableOpacity style={styles.showRecordButton}  onPress={() => router.push("/home")}>
                         <Text style={styles.submitText}>Show All Record</Text>
                     </TouchableOpacity>
                 </View>
