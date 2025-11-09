@@ -118,7 +118,15 @@ export default function ProfileScreen() {
                                 style={styles.button}
                                 onPress={() => {
                                     if (isEditing) {
-                                        handleSave();
+                                        // Show confirmation before saving
+                                        Alert.alert(
+                                            "Confirm Update",
+                                            "Are you sure you want to save the changes?",
+                                            [
+                                                { text: "Cancel", style: "cancel" },
+                                                { text: "Yes", onPress: () => handleSave() },
+                                            ]
+                                        );
                                     } else {
                                         setIsEditing(true);
                                     }
