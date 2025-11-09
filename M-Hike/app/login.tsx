@@ -34,6 +34,7 @@ export default function LoginScreen() {
             const user = await getUserByCredentials(username, email, password);
 
             if (user) {
+                // @ts-ignore
                 Alert.alert("✅ Login Successful", `Welcome, ${user.username}!`, [
                     { text: "OK", onPress: () => router.push("/register") }, // navigate to your home screen
                 ]);
