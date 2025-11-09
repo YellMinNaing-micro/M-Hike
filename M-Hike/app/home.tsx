@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 
-// Enable LayoutAnimation on Android
+// Enable smooth animation for Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
@@ -49,7 +49,7 @@ export default function HomeScreen() {
                 </View>
             </View>
 
-            {/* Search Box (toggle visibility) */}
+            {/* Search Box (toggles visibility) */}
             {showSearch && (
                 <View style={styles.searchContainer}>
                     <Ionicons
@@ -70,33 +70,35 @@ export default function HomeScreen() {
 
             <ScrollView
                 style={{ width: "100%" }}
-                contentContainerStyle={{ alignItems: "center" }}
+                contentContainerStyle={{ alignItems: "center", paddingBottom: 30 }}
             >
-                {/* Hike Card */}
-                <View style={styles.card}>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Name of Hike:</Text>
-                        <Text style={styles.value}>Mount Everest</Text>
-                    </View>
+                {/* Add consistent top spacing whether search is visible or not */}
+                <View style={[styles.cardContainer, !showSearch && { marginTop: 15 }]}>
+                    <View style={styles.card}>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Name of Hike:</Text>
+                            <Text style={styles.value}>Mount Everest</Text>
+                        </View>
 
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Location:</Text>
-                        <Text style={styles.value}>Pakistan</Text>
-                    </View>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Location:</Text>
+                            <Text style={styles.value}>Pakistan</Text>
+                        </View>
 
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Length of the hike (metres):</Text>
-                        <Text style={styles.value}>4068.0 m</Text>
-                    </View>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Length of the hike (metres):</Text>
+                            <Text style={styles.value}>4068.0 m</Text>
+                        </View>
 
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Date of the hike:</Text>
-                        <Text style={styles.value}>31/10/2025</Text>
-                    </View>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Date of the hike:</Text>
+                            <Text style={styles.value}>31/10/2025</Text>
+                        </View>
 
-                    <TouchableOpacity style={styles.detailsButton}>
-                        <Text style={styles.detailsText}>See More Details</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.detailsButton}>
+                            <Text style={styles.detailsText}>See More Details</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -140,11 +142,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         height: 40,
         width: "100%",
-        marginVertical: 15,
+        marginTop: 12,
+        marginBottom: 10,
     },
     searchInput: {
         flex: 1,
         color: "#111827",
+    },
+    cardContainer: {
+        width: "100%",
+        alignItems: "center",
     },
     card: {
         width: "90%",
