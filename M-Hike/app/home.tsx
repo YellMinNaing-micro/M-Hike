@@ -7,13 +7,27 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
+    LayoutAnimation,
+    Platform,
+    UIManager,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 
+// Enable LayoutAnimation on Android
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 export default function HomeScreen() {
+    const [showSearch, setShowSearch] = useState(false);
     const [search, setSearch] = useState("");
+
+    const toggleSearch = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setShowSearch(!showSearch);
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -29,25 +43,30 @@ export default function HomeScreen() {
                     <TouchableOpacity style={styles.iconButton}>
                         <Ionicons name="add-circle-outline" size={26} color="#4F46E5" />
                     </TouchableOpacity>
+                    <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
+                        <Ionicons name="search-outline" size={26} color="#4F46E5" />
+                    </TouchableOpacity>
                 </View>
             </View>
 
-            {/* Search */}
-            <View style={styles.searchContainer}>
-                <Ionicons
-                    name="search-outline"
-                    size={18}
-                    color="#6B7280"
-                    style={{ marginRight: 6 }}
-                />
-                <TextInput
-                    placeholder="Search by hike's name, location, length, or date"
-                    placeholderTextColor="#6B7280"
-                    style={styles.searchInput}
-                    value={search}
-                    onChangeText={setSearch}
-                />
-            </View>
+            {/* Search Box (toggle visibility) */}
+            {showSearch && (
+                <View style={styles.searchContainer}>
+                    <Ionicons
+                        name="search-outline"
+                        size={18}
+                        color="#6B7280"
+                        style={{ marginRight: 6 }}
+                    />
+                    <TextInput
+                        placeholder="Search by hike's name, location, length, or date"
+                        placeholderTextColor="#6B7280"
+                        style={styles.searchInput}
+                        value={search}
+                        onChangeText={setSearch}
+                    />
+                </View>
+            )}
 
             <ScrollView
                 style={{ width: "100%" }}
@@ -55,36 +74,24 @@ export default function HomeScreen() {
             >
                 {/* Hike Card */}
                 <View style={styles.card}>
-                    <View style={styles.field}>
+                    <View style={styles.row}>
                         <Text style={styles.label}>Name of Hike:</Text>
-                        <TextInput
-                            value="Mount Everest"
-                            style={styles.input}
-                            editable={false}
-                        />
+                        <Text style={styles.value}>Mount Everest</Text>
                     </View>
 
-                    <View style={styles.field}>
+                    <View style={styles.row}>
                         <Text style={styles.label}>Location:</Text>
-                        <TextInput value="Pakistan" style={styles.input} editable={false} />
+                        <Text style={styles.value}>Pakistan</Text>
                     </View>
 
-                    <View style={styles.field}>
+                    <View style={styles.row}>
                         <Text style={styles.label}>Length of the hike (metres):</Text>
-                        <TextInput
-                            value="4068.0 m"
-                            style={styles.input}
-                            editable={false}
-                        />
+                        <Text style={styles.value}>4068.0 m</Text>
                     </View>
 
-                    <View style={styles.field}>
+                    <View style={styles.row}>
                         <Text style={styles.label}>Date of the hike:</Text>
-                        <TextInput
-                            value="31/10/2025"
-                            style={styles.input}
-                            editable={false}
-                        />
+                        <Text style={styles.value}>31/10/2025</Text>
                     </View>
 
                     <TouchableOpacity style={styles.detailsButton}>
@@ -117,6 +124,7 @@ const styles = StyleSheet.create({
     },
     headerIcons: {
         flexDirection: "row",
+        alignItems: "center",
         gap: 10,
     },
     iconButton: {
@@ -149,28 +157,24 @@ const styles = StyleSheet.create({
         shadowRadius: 6,
         elevation: 3,
     },
-    field: {
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
         marginBottom: 12,
     },
     label: {
         fontSize: 14,
         fontWeight: "500",
         color: "#111827",
-        marginBottom: 4,
     },
-    input: {
-        backgroundColor: "#F9FAFB",
-        borderWidth: 1,
-        borderColor: "#D1D5DB",
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        height: 40,
-        color: "#111827",
+    value: {
+        fontSize: 14,
+        color: "#374151",
     },
     detailsButton: {
         backgroundColor: "#2563EB",
         borderRadius: 10,
-        marginTop: 15,
+        marginTop: 10,
         alignItems: "center",
         paddingVertical: 12,
     },
@@ -180,4 +184,3 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
 });
-
