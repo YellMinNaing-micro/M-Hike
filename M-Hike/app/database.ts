@@ -56,5 +56,26 @@ export const getUserByCredentials = async (
     }
 };
 
+export const updatePassword = async (username: string, email: string, newPassword: string) => {
+    try {
+        const user = await db.getFirstAsync(
+            "SELECT * FROM users WHERE username = ? AND email = ?;",
+            [username, email]
+        );
+
+        if (!user) return false; // user not found
+
+        await db.runAsync(
+            "UPDATE users SET password = ? WHERE username = ? AND email = ?;",
+            [newPassword, username, email]
+        );
+
+        return true;
+    } catch (error) {
+        console.error("Error updating password:", error);
+        return false;
+    }
+};
+
 
 export default db;
