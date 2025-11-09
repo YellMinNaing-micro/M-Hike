@@ -8,11 +8,13 @@ import {
     Text,
     TouchableWithoutFeedback,
     Keyboard,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { getUserByCredentials } from "./database";
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -21,9 +23,31 @@ export default function LoginScreen() {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleLogin = () => {
-        console.log("Logging in...");
-        // your API call or navigation
+    const handleLogin = async () => {
+        if (!username || !email || !password) {
+            Alert.alert("⚠️ Missing Fields", "Please fill out all fields.");
+            return;
+        }
+
+        try {
+            const user = await getUserByCredentials(username, email, password);
+
+            if (user) {
+                Alert.alert("✅ Login Successful", `Welcome, ${user.username}!`, [
+                    { text: "OK", onPress: () => router.push("/register") }, // navigate to your home screen
+                ]);
+
+                // optional: clear input fields
+                setUsername("");
+                setEmail("");
+                setPassword("");
+            } else {
+                Alert.alert("❌ Invalid Credentials", "Username, email, or password is incorrect.");
+            }
+        } catch (error) {
+            console.error("Login Error:", error);
+            Alert.alert("❌ Error", "Something went wrong while logging in.");
+        }
     };
 
     return (
@@ -34,7 +58,7 @@ export default function LoginScreen() {
                 <View style={styles.card}>
                     <Text style={styles.title}>Log In</Text>
                     <View style={styles.subtitleRow}>
-                        <Text style={styles.subtitle}>Not a member yet?{" "} </Text>
+                        <Text style={styles.subtitle}>Not a member yet? </Text>
                         <TouchableOpacity onPress={() => router.push("/register")}>
                             <Text style={styles.signup}>Sign up now</Text>
                         </TouchableOpacity>
@@ -47,7 +71,6 @@ export default function LoginScreen() {
                             placeholderTextColor="#6B7280"
                             value={username}
                             onChangeText={setUsername}
-                            returnKeyType="next"
                         />
                     </View>
 
@@ -59,7 +82,6 @@ export default function LoginScreen() {
                             keyboardType="email-address"
                             value={email}
                             onChangeText={setEmail}
-                            returnKeyType="next"
                         />
                     </View>
 
@@ -71,7 +93,6 @@ export default function LoginScreen() {
                             secureTextEntry={!showPassword}
                             value={password}
                             onChangeText={setPassword}
-                            returnKeyType="done"
                         />
                         <TouchableOpacity
                             style={styles.eyeIcon}
@@ -107,8 +128,7 @@ export default function LoginScreen() {
                     </View>
 
                     <Text style={styles.footerText}>
-                        By continuing to this app you agree to AllMindy Terms of Use and
-                        Privacy Policy
+                        By continuing to this app you agree to AllMindy Terms of Use and Privacy Policy
                     </Text>
                 </View>
             </SafeAreaView>
@@ -136,7 +156,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: { fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 5 },
-    subtitle: { fontSize: 14, color: "#6B7280", marginBottom: 0 },
+    subtitle: { fontSize: 14, color: "#6B7280" },
     signup: { color: "#4F46E5", fontWeight: "600" },
     inputBox: {
         width: "100%",
