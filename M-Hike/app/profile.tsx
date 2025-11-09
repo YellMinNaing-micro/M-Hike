@@ -31,10 +31,10 @@ export default function ProfileScreen() {
             {/* HEADER */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
-                    <Ionicons name="arrow-back-outline" size={26} color="#111827" />
+                    <Ionicons name="arrow-back-outline" size={26} color="#111827"/>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Profile</Text>
-                <View style={{ width: 26 }} />
+                <View style={{width: 26}}/>
             </View>
 
             {/* CONTENT */}
@@ -56,7 +56,6 @@ export default function ProfileScreen() {
                                 editable={false}
                             />
 
-                            {/* Password with eye icon */}
                             {/* Password with eye icon */}
                             <View style={styles.passwordContainer}>
                                 <TextInput
@@ -80,7 +79,9 @@ export default function ProfileScreen() {
                             </View>
 
                             {/* Buttons */}
-                            <TouchableOpacity style={styles.button}>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={() => router.push("/home")}>
                                 <Text style={styles.buttonText}>Show All Hike Records</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.button}>
