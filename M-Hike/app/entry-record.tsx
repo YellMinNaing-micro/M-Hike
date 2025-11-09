@@ -163,6 +163,7 @@ export default function EntryRecordScreen() {
                     />
 
                     {/* Add Observations */}
+                    <View style={styles.addObservationBox}>
                     <Text style={[styles.label, { marginTop: 20 }]}>Add Observations:</Text>
 
                     <View style={styles.observationBox}>
@@ -219,9 +220,14 @@ export default function EntryRecordScreen() {
                         onChangeText={setAdditionalComments}
                     />
 
+                    </View>
+
                     {/* Submit Button */}
                     <TouchableOpacity style={styles.submitButton}>
                         <Text style={styles.submitText}>Save Record</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.showRecordButton}>
+                        <Text style={styles.submitText}>Show All Record</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -341,6 +347,13 @@ const styles = StyleSheet.create({
     durationInput: {
         flex: 1,
     },
+    addObservationBox: {
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        borderRadius: 12,
+        padding: 12,
+        marginTop: 8,
+    },
     observationBox: {
         borderWidth: 1,
         borderColor: "#D1D5DB",
@@ -368,8 +381,15 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         backgroundColor: "#2563EB",
-        borderRadius: 10,
+        borderRadius: 100,
         marginTop: 20,
+        alignItems: "center",
+        paddingVertical: 12,
+    },
+    showRecordButton: {
+        backgroundColor: "#2563EB",
+        borderRadius: 100,
+        marginTop: 10,
         alignItems: "center",
         paddingVertical: 12,
     },
