@@ -5,7 +5,7 @@ import {
     TextInput,
     TouchableOpacity,
     StyleSheet,
-    ScrollView,
+    ScrollView, Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -21,6 +21,7 @@ export default function EntryRecordScreen() {
     const [description, setDescription] = useState("");
     const [timeOfObservation, setTimeOfObservation] = useState("");
     const [additionalComments, setAdditionalComments] = useState("");
+    const [isPopoverVisible, setIsPopoverVisible] = useState(false);
 
     // ✅ Fetch username from SQLite and auto-set observation time
     useEffect(() => {
@@ -31,18 +32,63 @@ export default function EntryRecordScreen() {
         loadUser();
     }, []);
 
+    // Auto-set current date & time
+    useEffect(() => {
+        const now = new Date();
+        setTimeOfObservation(now.toLocaleString());
+    }, []);
+
+    const handleClear = () => {
+        setTimeOfObservation("");
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="dark" backgroundColor="#E0F0FF" />
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Header */}
-                <View style={styles.headerBox}>
+                <TouchableOpacity
+                    style={styles.headerBox}
+                    onPress={() => setIsPopoverVisible(true)}
+                >
                     <Text style={styles.welcomeText}>
                         Welcome, {user ? user.username : "Loading..."}!
                     </Text>
                     <Text style={styles.headerTitle}>Add New Hike Record</Text>
-                </View>
+                </TouchableOpacity>
+
+                {/* Popover Modal */}
+                <Modal
+                    visible={isPopoverVisible}
+                    transparent
+                    animationType="fade"
+                >
+                    <View style={styles.modalBackground}>
+                        <View style={styles.popoverBox}>
+                            <Text style={styles.popoverLabel}>Time of Observation</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={timeOfObservation}
+                                editable={false} // disabled
+                            />
+
+                            <TouchableOpacity
+                                style={styles.clearButton}
+                                onPress={() => setTimeOfObservation("")}
+                            >
+                                <Text style={styles.clearText}>Clear All</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.closeButton}
+                                onPress={() => setIsPopoverVisible(false)}
+                            >
+                                <Text style={styles.closeText}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
 
                 {/* Form */}
                 <View style={styles.formBox}>
@@ -213,6 +259,7 @@ export default function EntryRecordScreen() {
                             onChangeText={setTimeOfObservation}
                             placeholder="Auto-filled with current date and time"
                             placeholderTextColor="#9CA3AF"
+                            editable={false}
                         />
 
                         {/* Additional Comments */}
@@ -407,4 +454,34 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         fontSize: 15,
     },
+    modalBackground: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.3)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    popoverBox: {
+        backgroundColor: "#fff",
+        borderRadius: 12,
+        padding: 20,
+        width: "80%",
+        alignItems: "center",
+    },
+    popoverLabel: { fontSize: 14, fontWeight: "500", marginBottom: 10 },
+    clearButton: {
+        backgroundColor: "#F87171",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    clearText: { color: "#fff", fontWeight: "600" },
+    closeButton: {
+        backgroundColor: "#2563EB",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+    },
+    closeText: { color: "#fff", fontWeight: "600" },
+
 });
