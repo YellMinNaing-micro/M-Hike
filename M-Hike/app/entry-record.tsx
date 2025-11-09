@@ -101,31 +101,7 @@ export default function EntryRecordScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Level of Difficulty */}
-                    <Text style={styles.label}>Level of Difficulty:</Text>
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            selectedValue={difficulty}
-                            onValueChange={(itemValue) => setDifficulty(itemValue)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Easy" value="Easy" />
-                            <Picker.Item label="Moderate" value="Moderate" />
-                            <Picker.Item label="Hard" value="Hard" />
-                        </Picker>
-                    </View>
 
-                    {/* Description */}
-                    <Text style={styles.label}>Description:</Text>
-                    <TextInput
-                        style={[styles.input, styles.textArea]}
-                        placeholder="Enter description about the hike..."
-                        placeholderTextColor="#9CA3AF"
-                        multiline
-                        numberOfLines={4}
-                        value={description}
-                        onChangeText={setDescription}
-                    />
 
                     {/* Total Duration */}
                     <Text style={styles.label}>Total Duration (hours and minutes):</Text>
@@ -151,6 +127,32 @@ export default function EntryRecordScreen() {
                         placeholder="Enter number of hikers"
                         keyboardType="numeric"
                         placeholderTextColor="#9CA3AF"
+                    />
+
+                    {/* Level of Difficulty */}
+                    <Text style={styles.label}>Level of Difficulty:</Text>
+                    <View style={styles.pickerContainer}>
+                        <Picker
+                            selectedValue={difficulty}
+                            onValueChange={(itemValue) => setDifficulty(itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Easy" value="Easy" />
+                            <Picker.Item label="Moderate" value="Moderate" />
+                            <Picker.Item label="Hard" value="Hard" />
+                        </Picker>
+                    </View>
+
+                    {/* Description */}
+                    <Text style={styles.label}>Description:</Text>
+                    <TextInput
+                        style={[styles.input, styles.textArea]}
+                        placeholder="Enter description about the hike..."
+                        placeholderTextColor="#9CA3AF"
+                        multiline
+                        numberOfLines={4}
+                        value={description}
+                        onChangeText={setDescription}
                     />
 
                     {/* Submit Button */}
