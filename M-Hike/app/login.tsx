@@ -36,7 +36,7 @@ export default function LoginScreen() {
             if (user) {
                 // @ts-ignore
                 Alert.alert("✅ Login Successful", `Welcome, ${user.username}!`, [
-                    { text: "OK", onPress: () => router.push("/register") }, // navigate to your home screen
+                    { text: "OK", onPress: () => router.push("/home") }, // navigate to your home screen
                 ]);
 
                 // optional: clear input fields
