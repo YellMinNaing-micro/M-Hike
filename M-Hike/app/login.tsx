@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { getUserByCredentials, logAllUsers } from "./database";
+import { getUserByCredentials, logAllUsers } from "../lib/database";
 
 export default function LoginScreen() {
     const router = useRouter();
