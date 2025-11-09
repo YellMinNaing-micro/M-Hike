@@ -36,7 +36,7 @@ export default function LoginScreen() {
             if (user) {
                 // @ts-ignore
                 Alert.alert("✅ Login Successful", `Welcome, ${user.username}!`, [
-                    {text: "OK", onPress: () => router.push("/home")}, // navigate to your home screen
+                    {text: "OK", onPress: () => router.replace("/home")}, // navigate to your home screen
                 ]);
 
                 // optional: clear input fields
@@ -61,7 +61,7 @@ export default function LoginScreen() {
                     <Text style={styles.title}>Log In</Text>
                     <View style={styles.subtitleRow}>
                         <Text style={styles.subtitle}>Not a member yet? </Text>
-                        <TouchableOpacity onPress={() => router.push("/register")}>
+                        <TouchableOpacity onPress={() => router.replace("/register")}>
                             <Text style={styles.signup}>Sign up now</Text>
                         </TouchableOpacity>
                     </View>
@@ -109,7 +109,7 @@ export default function LoginScreen() {
                     </View>
 
                     <View style={styles.forgotContainer}>
-                        <TouchableOpacity onPress={() => router.push("/forgot-password")}>
+                        <TouchableOpacity onPress={() => router.replace("/forgot-password")}>
                             <Text style={styles.forgot}>Forgot your password?</Text>
                         </TouchableOpacity>
                     </View>
