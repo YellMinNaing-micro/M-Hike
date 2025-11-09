@@ -1,4 +1,3 @@
-// app/signup.tsx
 import React, { useState } from "react";
 import {
     View,
@@ -8,11 +7,13 @@ import {
     Text,
     TouchableWithoutFeedback,
     Keyboard,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { insertUser } from "./database";
 
 export default function RegisterScreen() {
     const router = useRouter();
@@ -23,9 +24,32 @@ export default function RegisterScreen() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleSignup = () => {
-        console.log("Signing up...");
-        router.push("/login")
+    const handleSignup = async () => {
+        if (!username || !email || !password || !confirmPassword) {
+            Alert.alert("⚠️ Missing Fields", "Please fill out all fields.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            Alert.alert("❌ Password Mismatch", "Passwords do not match.");
+            return;
+        }
+
+        try {
+            await insertUser(username, email, password);
+            Alert.alert("✅ Success", "Account created successfully!", [
+                { text: "OK", onPress: () => router.push("/login") },
+            ]);
+
+            // reset form
+            setUsername("");
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+        } catch (error) {
+            console.error("Signup Error:", error);
+            Alert.alert("❌ Error", "Something went wrong while saving your data.");
+        }
     };
 
     return (
@@ -50,7 +74,6 @@ export default function RegisterScreen() {
                             placeholderTextColor="#6B7280"
                             value={username}
                             onChangeText={setUsername}
-                            returnKeyType="next"
                         />
                     </View>
 
@@ -62,7 +85,6 @@ export default function RegisterScreen() {
                             keyboardType="email-address"
                             value={email}
                             onChangeText={setEmail}
-                            returnKeyType="next"
                         />
                     </View>
 
@@ -74,7 +96,6 @@ export default function RegisterScreen() {
                             secureTextEntry={!showPassword}
                             value={password}
                             onChangeText={setPassword}
-                            returnKeyType="next"
                         />
                         <TouchableOpacity
                             style={styles.eyeIcon}
@@ -96,7 +117,6 @@ export default function RegisterScreen() {
                             secureTextEntry={!showConfirmPassword}
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
-                            returnKeyType="done"
                         />
                         <TouchableOpacity
                             style={styles.eyeIcon}
@@ -172,11 +192,7 @@ const styles = StyleSheet.create({
         position: "relative",
     },
     input: { height: 45, color: "#111827" },
-    eyeIcon: {
-        position: "absolute",
-        right: 10,
-        top: 12,
-    },
+    eyeIcon: { position: "absolute", right: 10, top: 12 },
     signupBtn: {
         backgroundColor: "#4F46E5",
         borderRadius: 10,
