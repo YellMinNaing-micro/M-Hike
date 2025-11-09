@@ -23,11 +23,11 @@ import { useRouter } from "expo-router";
 export default function IndexScreen() {
     const router = useRouter();
     const handleLogin = () => {
-        router.push("/login");
+        router.replace("/login");
     };
 
     const handleSignUp = () => {
-        router.push("/register");
+        router.replace("/register");
     };
 
     return (
