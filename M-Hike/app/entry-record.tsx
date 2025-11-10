@@ -19,10 +19,6 @@ import {
     PopoverBackdrop,
     PopoverContent,
     PopoverArrow,
-    PopoverHeader,
-    PopoverBody,
-    Button,
-    ButtonText,
 } from "@gluestack-ui/themed";
 
 export default function EntryRecordScreen() {
@@ -141,7 +137,7 @@ export default function EntryRecordScreen() {
                         >
                             <Text
                                 style={{
-                                    color: "#ef1717", // ✅ Blue text for visibility
+                                    color: "#ef1717",
                                     fontWeight: "600",
                                     fontSize: 15,
                                 }}
