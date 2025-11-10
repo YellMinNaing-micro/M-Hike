@@ -5,13 +5,25 @@ import {
     TextInput,
     TouchableOpacity,
     StyleSheet,
-    ScrollView, Modal,
+    ScrollView,
+    Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { getAllUsers } from "../lib/database";
+import {
+    Popover,
+    PopoverBackdrop,
+    PopoverContent,
+    PopoverArrow,
+    PopoverHeader,
+    PopoverBody,
+    Button,
+    ButtonText,
+} from "@gluestack-ui/themed";
 
 export default function EntryRecordScreen() {
     const router = useRouter();
@@ -21,9 +33,24 @@ export default function EntryRecordScreen() {
     const [description, setDescription] = useState("");
     const [timeOfObservation, setTimeOfObservation] = useState("");
     const [additionalComments, setAdditionalComments] = useState("");
+    const [dateOfHike, setDateOfHike] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const [isPopoverVisible, setIsPopoverVisible] = useState(false);
 
-    // ✅ Fetch username from SQLite and auto-set observation time
+    const [formData, setFormData] = useState({
+        name: "",
+        location: "",
+        length: "",
+        hours: "",
+        minutes: "",
+        hikers: "",
+        animalSightings: "",
+        vegetation: "",
+        weather: "",
+        trail: "",
+    });
+
+    // ✅ Fetch username
     useEffect(() => {
         const loadUser = async () => {
             const users = await getAllUsers();
@@ -32,14 +59,40 @@ export default function EntryRecordScreen() {
         loadUser();
     }, []);
 
-    // Auto-set current date & time
+    // ✅ Auto-set time of observation
     useEffect(() => {
         const now = new Date();
         setTimeOfObservation(now.toLocaleString());
     }, []);
 
-    const handleClear = () => {
-        setTimeOfObservation("");
+    // ✅ Clear All Fields (Form Reset)
+    const handleClearAll = () => {
+        setFormData({
+            name: "",
+            location: "",
+            length: "",
+            hours: "",
+            minutes: "",
+            hikers: "",
+            animalSightings: "",
+            vegetation: "",
+            weather: "",
+            trail: "",
+        });
+        setDifficulty("Easy");
+        setParkingAvailable(true);
+        setDescription("");
+        setAdditionalComments("");
+        setDateOfHike(new Date());
+        setTimeOfObservation(new Date().toLocaleString());
+        setIsPopoverVisible(false);
+    };
+
+    // ✅ Date Picker change handler
+    const onChangeDate = (event: any, selectedDate?: Date) => {
+        const currentDate = selectedDate || dateOfHike;
+        setShowDatePicker(Platform.OS === "ios");
+        setDateOfHike(currentDate);
     };
 
     return (
@@ -48,15 +101,41 @@ export default function EntryRecordScreen() {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Header */}
-                <TouchableOpacity
-                    style={styles.headerBox}
-                    onPress={() => setIsPopoverVisible(true)}
+                <Popover
+                    isOpen={isPopoverVisible}
+                    onClose={() => setIsPopoverVisible(false)}
+                    trigger={(triggerProps) => (
+                        <TouchableOpacity
+                            {...triggerProps}
+                            style={styles.headerBox}
+                            onPress={() => setIsPopoverVisible(true)}
+                        >
+                            <Text style={styles.welcomeText}>
+                                Welcome, {user ? user.username : "Loading..."}!
+                            </Text>
+                            <Text style={styles.headerTitle}>Add New Hike Record</Text>
+                        </TouchableOpacity>
+                    )}
                 >
-                    <Text style={styles.welcomeText}>
-                        Welcome, {user ? user.username : "Loading..."}!
-                    </Text>
-                    <Text style={styles.headerTitle}>Add New Hike Record</Text>
-                </TouchableOpacity>
+                    <PopoverBackdrop />
+                    <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverHeader>
+                            <Text style={{ fontWeight: "600", fontSize: 16 }}>
+                                Clear All Fields
+                            </Text>
+                        </PopoverHeader>
+                        <PopoverBody>
+                            <Button
+                                action="negative"
+                                onPress={handleClearAll}
+                                style={{ marginTop: 8 }}
+                            >
+                                <ButtonText>Clear All</ButtonText>
+                            </Button>
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
 
                 {/* Form */}
                 <View style={styles.formBox}>
@@ -85,13 +164,24 @@ export default function EntryRecordScreen() {
                         placeholderTextColor="#9CA3AF"
                     />
 
-                    {/* Date */}
+                    {/* Date Picker */}
                     <Text style={styles.label}>Date of the Hike:</Text>
-                    <TextInput
+                    <TouchableOpacity
                         style={styles.input}
-                        placeholder="Select date of the hike"
-                        placeholderTextColor="#9CA3AF"
-                    />
+                        onPress={() => setShowDatePicker(true)}
+                    >
+                        <Text>
+                            {dateOfHike ? dateOfHike.toLocaleDateString() : "Select date"}
+                        </Text>
+                    </TouchableOpacity>
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={dateOfHike}
+                            mode="date"
+                            display="default"
+                            onChange={onChangeDate}
+                        />
+                    )}
 
                     {/* Parking Availability */}
                     <Text style={styles.label}>Parking Availability:</Text>
@@ -259,16 +349,10 @@ export default function EntryRecordScreen() {
     );
 }
 
+// ✅ Styles
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#E0F0FF",
-        paddingHorizontal: 15,
-    },
-    scrollContent: {
-        paddingBottom: 30,
-        alignItems: "center",
-    },
+    container: { flex: 1, backgroundColor: "#E0F0FF", paddingHorizontal: 15 },
+    scrollContent: { paddingBottom: 30, alignItems: "center" },
     headerBox: {
         backgroundColor: "#fff",
         borderRadius: 12,
