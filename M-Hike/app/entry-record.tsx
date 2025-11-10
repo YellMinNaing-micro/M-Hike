@@ -58,38 +58,6 @@ export default function EntryRecordScreen() {
                     <Text style={styles.headerTitle}>Add New Hike Record</Text>
                 </TouchableOpacity>
 
-                {/* Popover Modal */}
-                <Modal
-                    visible={isPopoverVisible}
-                    transparent
-                    animationType="fade"
-                >
-                    <View style={styles.modalBackground}>
-                        <View style={styles.popoverBox}>
-                            <Text style={styles.popoverLabel}>Time of Observation</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={timeOfObservation}
-                                editable={false} // disabled
-                            />
-
-                            <TouchableOpacity
-                                style={styles.clearButton}
-                                onPress={() => setTimeOfObservation("")}
-                            >
-                                <Text style={styles.clearText}>Clear All</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={styles.closeButton}
-                                onPress={() => setIsPopoverVisible(false)}
-                            >
-                                <Text style={styles.closeText}>Close</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
-
                 {/* Form */}
                 <View style={styles.formBox}>
                     {/* Name of Hike */}
