@@ -110,32 +110,48 @@ export default function EntryRecordScreen() {
                             style={styles.headerBox}
                             onPress={() => setIsPopoverVisible(true)}
                         >
-                            <Text style={styles.welcomeText}>
-                                Welcome, {user ? user.username : "Loading..."}!
-                            </Text>
-                            <Text style={styles.headerTitle}>Add New Hike Record</Text>
+                            <View style={styles.headerRow}>
+                                <View>
+                                    <Text style={styles.welcomeText}>
+                                        Welcome, {user ? user.username : "Loading..."}!
+                                    </Text>
+                                    <Text style={styles.headerTitle}>Add New Hike Record</Text>
+                                </View>
+                                {/* ▼ Dropdown Icon */}
+                                <Text style={styles.dropdownIcon}>▼</Text>
+                            </View>
                         </TouchableOpacity>
                     )}
                 >
                     <PopoverBackdrop />
-                    <PopoverContent>
+                    <PopoverContent
+                        style={{
+                            alignItems: "center", // ✅ Aligns to flex-end
+                            paddingVertical: 10,
+                            width: 90,
+                        }}
+                    >
                         <PopoverArrow />
-                        <PopoverHeader>
-                            <Text style={{ fontWeight: "600", fontSize: 16 }}>
-                                Clear All Fields
-                            </Text>
-                        </PopoverHeader>
-                        <PopoverBody>
-                            <Button
-                                action="negative"
-                                onPress={handleClearAll}
-                                style={{ marginTop: 8 }}
+                        <TouchableOpacity
+                            onPress={handleClearAll}
+                            style={{
+                                paddingVertical: 6,
+                                paddingHorizontal: 10,
+                            }}
+                        >
+                            <Text
+                                style={{
+                                    color: "#ef1717", // ✅ Blue text for visibility
+                                    fontWeight: "600",
+                                    fontSize: 15,
+                                }}
                             >
-                                <ButtonText>Clear All</ButtonText>
-                            </Button>
-                        </PopoverBody>
+                                Clear All
+                            </Text>
+                        </TouchableOpacity>
                     </PopoverContent>
                 </Popover>
+
 
                 {/* Form */}
                 <View style={styles.formBox}>
@@ -535,5 +551,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     closeText: { color: "#fff", fontWeight: "600" },
-
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    dropdownIcon: {
+        fontSize: 18,
+        color: "#374151",
+        marginLeft: 8,
+    },
 });
