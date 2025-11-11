@@ -156,59 +156,44 @@ export const getAllEntries = async () => {
 
 // ✅ GET entry by ID
 export const getEntryById = async (id: number) => {
-    const database = await openDB();
-    const result = await database.getFirstAsync(
-        "SELECT * FROM entries WHERE id = ?;",
-        [id]
+    const db = await openDB();
+    return await db.getFirstAsync(`SELECT * FROM entries WHERE id = ?`, [id]);
+};
+
+export const updateEntry = async (id: number, entry: any) => {
+    const db = await openDB();
+    await db.runAsync(
+        `UPDATE entries SET 
+      name=?, location=?, length=?, hours=?, minutes=?, hikers=?, 
+      animalSightings=?, vegetation=?, weather=?, trail=?, 
+      parkingAvailable=?, difficulty=?, description=?, 
+      dateOfHike=?, timeOfObservation=?, additionalComments=? 
+      WHERE id=?`,
+        [
+            entry.name,
+            entry.location,
+            entry.length,
+            entry.hours,
+            entry.minutes,
+            entry.hikers,
+            entry.animalSightings,
+            entry.vegetation,
+            entry.weather,
+            entry.trail,
+            entry.parkingAvailable ? 1 : 0,
+            entry.difficulty,
+            entry.description,
+            entry.dateOfHike,
+            entry.timeOfObservation,
+            entry.additionalComments,
+            id,
+        ]
     );
-    return result ?? null;
 };
 
-// ✅ UPDATE entry
-export const updateEntry = async (entry: any) => {
-    try {
-        const database = await openDB();
-        await database.runAsync(
-            `UPDATE entries SET
-        name = ?, location = ?, length = ?, dateOfHike = ?, parkingAvailable = ?,
-        hours = ?, minutes = ?, hikers = ?, difficulty = ?, description = ?,
-        animalSightings = ?, vegetation = ?, weather = ?, trail = ?,
-        timeOfObservation = ?, additionalComments = ?
-      WHERE id = ?;`,
-            [
-                entry.name,
-                entry.location,
-                entry.length,
-                entry.dateOfHike,
-                entry.parkingAvailable ? 1 : 0,
-                entry.hours,
-                entry.minutes,
-                entry.hikers,
-                entry.difficulty,
-                entry.description,
-                entry.animalSightings,
-                entry.vegetation,
-                entry.weather,
-                entry.trail,
-                entry.timeOfObservation,
-                entry.additionalComments,
-                entry.id,
-            ]
-        );
-        console.log("✅ Entry updated successfully");
-    } catch (error) {
-        console.error("❌ Error updating entry:", error);
-    }
-};
-
-// ✅ DELETE entry by ID
 export const deleteEntry = async (id: number) => {
-    try {
-        const database = await openDB();
-        await database.runAsync("DELETE FROM entries WHERE id = ?;", [id]);
-        console.log("🗑️ Entry deleted successfully");
-    } catch (error) {
-        console.error("❌ Error deleting entry:", error);
-    }
+    const db = await openDB();
+    await db.runAsync(`DELETE FROM entries WHERE id = ?`, [id]);
 };
+
 
