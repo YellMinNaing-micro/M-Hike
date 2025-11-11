@@ -1,5 +1,4 @@
-// app/home.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -8,20 +7,44 @@ import {
     TouchableOpacity,
     ScrollView,
     LayoutAnimation,
-    Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
+import { getAllEntries } from "../lib/database";
 
 export default function HomeScreen() {
     const router = useRouter();
     const [showSearch, setShowSearch] = useState(false);
     const [search, setSearch] = useState("");
+    const [entries, setEntries] = useState<any[]>([]); // ✅ Store hike records
+
+    const formatDate = (dateString: string) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString; // in case it’s already formatted
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    // ✅ Load hike entries on mount
+    useEffect(() => {
+        const loadEntries = async () => {
+            try {
+                const allEntries = await getAllEntries();
+                setEntries(allEntries);
+                console.log("📋 Loaded Entries:", allEntries);
+            } catch (error) {
+                console.error("❌ Error loading entries:", error);
+            }
+        };
+        loadEntries();
+    }, []);
 
     const toggleSearch = () => {
-        // Safe to call even if Android ignores animation
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setShowSearch(!showSearch);
     };
@@ -32,22 +55,32 @@ export default function HomeScreen() {
 
             {/* Header */}
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>Total Hike Records: 1</Text>
+                <Text style={styles.headerTitle}>
+                    Total Hike Records: {entries.length}
+                </Text>
+
                 <View style={styles.headerIcons}>
-                    <TouchableOpacity style={styles.iconButton} onPress={() => router.push("/profile")}>
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => router.push("/profile")}
+                    >
                         <Ionicons name="person-circle-outline" size={26} color="#4F46E5" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconButton} onPress={() => router.push("/entry-record")}
+
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => router.push("/entry-record")}
                     >
                         <Ionicons name="add-circle-outline" size={26} color="#4F46E5" />
                     </TouchableOpacity>
+
                     <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
                         <Ionicons name="search-outline" size={26} color="#4F46E5" />
                     </TouchableOpacity>
                 </View>
             </View>
 
-            {/* Search Box (toggles visibility) */}
+            {/* Search Box */}
             {showSearch && (
                 <View style={styles.searchContainer}>
                     <Ionicons
@@ -70,34 +103,46 @@ export default function HomeScreen() {
                 style={{ width: "100%" }}
                 contentContainerStyle={{ alignItems: "center", paddingBottom: 30 }}
             >
-                {/* Add consistent top spacing whether search is visible or not */}
-                <View style={[styles.cardContainer, !showSearch && { marginTop: 15 }]}>
-                    <View style={styles.card}>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Name of Hike:</Text>
-                            <Text style={styles.value}>Mount Everest</Text>
-                        </View>
+                {/* ✅ Display hike cards dynamically */}
+                {entries.map((item, index) => (
+                    <View
+                        key={item.id || index}
+                        style={[styles.cardContainer, !showSearch && { marginTop: 15 }]}
+                    >
+                        <View style={styles.card}>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Name of Hike:</Text>
+                                <Text style={styles.value}>{item.name}</Text>
+                            </View>
 
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Location:</Text>
-                            <Text style={styles.value}>Pakistan</Text>
-                        </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Location:</Text>
+                                <Text style={styles.value}>{item.location}</Text>
+                            </View>
 
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Length of the hike (metres):</Text>
-                            <Text style={styles.value}>4068.0 m</Text>
-                        </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Length (metres):</Text>
+                                <Text style={styles.value}>{item.length} m</Text>
+                            </View>
 
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Date of the hike:</Text>
-                            <Text style={styles.value}>31/10/2025</Text>
-                        </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Date of Hike:</Text>
+                                <Text style={styles.value}>{formatDate(item.dateOfHike)}</Text>
+                            </View>
 
-                        <TouchableOpacity style={styles.detailsButton}>
-                            <Text style={styles.detailsText}>See More Details</Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity style={styles.detailsButton}>
+                                <Text style={styles.detailsText}>See More Details</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
+                ))}
+
+                {/* If no records */}
+                {entries.length === 0 && (
+                    <Text style={{ marginTop: 40, color: "#6B7280" }}>
+                        No hike records found.
+                    </Text>
+                )}
             </ScrollView>
         </SafeAreaView>
     );
