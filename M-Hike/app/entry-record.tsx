@@ -7,34 +7,46 @@ import {
     StyleSheet,
     ScrollView,
     Platform,
-    Switch,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useRouter } from "expo-router";
-import { getAllUsers, insertEntry } from "../lib/database";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import {
+    getAllUsers,
+    insertEntry,
+    getEntryById,
+    updateEntry,
+    deleteEntry,
+} from "../lib/database";
 import {
     Popover,
     PopoverBackdrop,
     PopoverContent,
     PopoverArrow,
 } from "@gluestack-ui/themed";
+import { EntryFormData } from "../data/EntryFormData";
 
 export default function EntryRecordScreen() {
     const router = useRouter();
+    const { id } = useLocalSearchParams<{ id?: string }>(); // read ?id=xxx
+
+    // UI state
     const [user, setUser] = useState<any>(null);
-    const [parkingAvailable, setParkingAvailable] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [isPopoverVisible, setIsPopoverVisible] = useState(false);
+
+    // form state
     const [difficulty, setDifficulty] = useState("Easy");
     const [description, setDescription] = useState("");
     const [timeOfObservation, setTimeOfObservation] = useState("");
     const [additionalComments, setAdditionalComments] = useState("");
     const [dateOfHike, setDateOfHike] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [isPopoverVisible, setIsPopoverVisible] = useState(false);
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<EntryFormData>({
         name: "",
         location: "",
         length: "",
@@ -45,58 +57,66 @@ export default function EntryRecordScreen() {
         vegetation: "",
         weather: "",
         trail: "",
-        parkingAvailable: false,
+        parkingAvailable: true,
     });
 
-    const handleSaveRecord = async () => {
-        if (!formData.name.trim() || !formData.location.trim()) {
-            alert("Please fill in at least the name and location of the hike.");
-            return;
-        }
+    const editable = !!(isEditing || !id);
 
-        const { animalSightings, vegetation, weather, trail } = formData;
-        const hasAnyObservation =
-            animalSightings.trim() ||
-            vegetation.trim() ||
-            weather.trim() ||
-            trail.trim();
-
-        if (!hasAnyObservation) {
-            alert(
-                "Please fill at least one observation (animal, vegetation, weather, or trail)."
-            );
-            return;
-        }
-
-        const entryData = {
-            ...formData,
-            dateOfHike: dateOfHike.toISOString(),
-            parkingAvailable: formData.parkingAvailable,
-            difficulty,
-            description,
-            timeOfObservation,
-            additionalComments,
-        };
-
-        await insertEntry(entryData);
-        console.log(entryData);
-        alert("✅ Record saved successfully!");
-        handleClearAll();
-        router.replace("/home")
-    };
-
+    // Load logged-in user (for header welcome)
     useEffect(() => {
         const loadUser = async () => {
-            const users = await getAllUsers();
-            if (users && users.length > 0) setUser(users[0]);
+            try {
+                const users = await getAllUsers();
+                if (users && users.length > 0) setUser(users[0]);
+            } catch (err) {
+                console.warn("Error loading users", err);
+            }
         };
         loadUser();
     }, []);
 
+    // Load record if id provided
     useEffect(() => {
-        const now = new Date();
-        setTimeOfObservation(now.toLocaleString());
-    }, []);
+        const loadRecord = async () => {
+            try {
+                if (id) {
+                    const entry = await getEntryById(Number(id));
+                    if (entry) {
+                        setFormData({
+                            name: entry.name || "",
+                            location: entry.location || "",
+                            length: entry.length?.toString() || "",
+                            hours: entry.hours?.toString() || "",
+                            minutes: entry.minutes?.toString() || "",
+                            hikers: entry.hikers?.toString() || "",
+                            animalSightings: entry.animalSightings || "",
+                            vegetation: entry.vegetation || "",
+                            weather: entry.weather || "",
+                            trail: entry.trail || "",
+                            parkingAvailable:
+                                entry.parkingAvailable === 1 || entry.parkingAvailable === true,
+                        });
+                        setDifficulty(entry.difficulty || "Easy");
+                        setDescription(entry.description || "");
+                        setAdditionalComments(entry.additionalComments || "");
+                        setDateOfHike(entry.dateOfHike ? new Date(entry.dateOfHike) : new Date());
+                        setTimeOfObservation(entry.timeOfObservation || new Date().toLocaleString());
+                        setIsEditing(false); // start in view mode
+                    } else {
+                        setIsEditing(true);
+                    }
+                } else {
+                    // New entry: set current observation time
+                    const now = new Date();
+                    setTimeOfObservation(now.toLocaleString());
+                    setIsEditing(false);
+                }
+            } catch (err) {
+                console.error("Error loading entry", err);
+            }
+        };
+        loadRecord();
+    }, [id]);
 
     const handleClearAll = () => {
         setFormData({
@@ -113,18 +133,114 @@ export default function EntryRecordScreen() {
             parkingAvailable: true,
         });
         setDifficulty("Easy");
-        setParkingAvailable(true);
         setDescription("");
         setAdditionalComments("");
         setDateOfHike(new Date());
         setTimeOfObservation(new Date().toLocaleString());
         setIsPopoverVisible(false);
+        setIsEditing(false);
     };
 
     const onChangeDate = (event: any, selectedDate?: Date) => {
         const currentDate = selectedDate || dateOfHike;
         setShowDatePicker(Platform.OS === "ios");
         setDateOfHike(currentDate);
+    };
+
+    const validateRequired = () => {
+        if (!formData.name.trim() || !formData.location.trim()) {
+            Alert.alert("Validation", "Please fill in at least the name and location of the hike.");
+            return false;
+        }
+        const { animalSightings, vegetation, weather, trail } = formData;
+        const hasAnyObservation =
+            (animalSightings || "").trim() ||
+            (vegetation || "").trim() ||
+            (weather || "").trim() ||
+            (trail || "").trim();
+
+        if (!hasAnyObservation) {
+            Alert.alert(
+                "Validation",
+                "Please fill at least one observation (animal, vegetation, weather, or trail)."
+            );
+            return false;
+        }
+        return true;
+    };
+
+    const handleSaveRecord = async () => {
+        if (!validateRequired()) return;
+
+        const entryData = {
+            ...formData,
+            dateOfHike: dateOfHike.toISOString(),
+            parkingAvailable: formData.parkingAvailable,
+            difficulty,
+            description,
+            timeOfObservation,
+            additionalComments,
+        };
+
+        try {
+            await insertEntry(entryData);
+            Alert.alert("Success", "✅ Record saved successfully!", [
+                { text: "OK", onPress: () => router.replace("/home") },
+            ]);
+        } catch (err) {
+            console.error("Save error", err);
+            Alert.alert("Error", "Failed to save record.");
+        }
+    };
+
+    const handleUpdateRecord = async () => {
+        if (!validateRequired()) return;
+
+        const updatedData = {
+            ...formData,
+            dateOfHike: dateOfHike.toISOString(),
+            parkingAvailable: formData.parkingAvailable,
+            difficulty,
+            description,
+            timeOfObservation,
+            additionalComments,
+        };
+
+        try {
+            await updateEntry(Number(id), updatedData);
+            Alert.alert("Success", "✅ Record updated successfully!", [
+                { text: "OK", onPress: () => router.replace("/home") },
+            ]);
+        } catch (err) {
+            console.error("Update error", err);
+            Alert.alert("Error", "Failed to update record.");
+        }
+    };
+
+    const confirmDelete = () => {
+        Alert.alert(
+            "Delete",
+            "Are you sure you want to delete this record?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            await deleteEntry(Number(id));
+                            Alert.alert("Deleted", "🗑️ Record deleted successfully!", [
+                                { text: "OK", onPress: () => router.replace("/home") },
+                            ]);
+                        } catch (err) {
+                            console.error("Delete error", err);
+                            Alert.alert("Error", "Failed to delete record.");
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     };
 
     return (
@@ -147,7 +263,9 @@ export default function EntryRecordScreen() {
                                     <Text style={styles.welcomeText}>
                                         Welcome, {user ? user.username : "Loading..."}!
                                     </Text>
-                                    <Text style={styles.headerTitle}>Add New Hike Record</Text>
+                                    <Text style={styles.headerTitle}>
+                                        {id ? "Hike Record Detail" : "Add New Hike Record"}
+                                    </Text>
                                 </View>
                                 <Text style={styles.dropdownIcon}>▼</Text>
                             </View>
@@ -156,27 +274,14 @@ export default function EntryRecordScreen() {
                 >
                     <PopoverBackdrop />
                     <PopoverContent
-                        style={{
-                            alignItems: "center",
-                            paddingVertical: 10,
-                            width: 90,
-                        }}
+                        style={{ alignItems: "center", paddingVertical: 10, width: 90 }}
                     >
                         <PopoverArrow />
                         <TouchableOpacity
                             onPress={handleClearAll}
-                            style={{
-                                paddingVertical: 6,
-                                paddingHorizontal: 10,
-                            }}
+                            style={{ paddingVertical: 6, paddingHorizontal: 10 }}
                         >
-                            <Text
-                                style={{
-                                    color: "#ef1717",
-                                    fontWeight: "600",
-                                    fontSize: 15,
-                                }}
-                            >
+                            <Text style={{ color: "#ef1717", fontWeight: "600", fontSize: 15 }}>
                                 Clear All
                             </Text>
                         </TouchableOpacity>
@@ -189,6 +294,7 @@ export default function EntryRecordScreen() {
                     <Text style={styles.label}>Name of Hike:</Text>
                     <TextInput
                         style={styles.input}
+                        editable={editable}
                         placeholder="Name of the hike"
                         placeholderTextColor="#9CA3AF"
                         value={formData.name}
@@ -199,6 +305,7 @@ export default function EntryRecordScreen() {
                     <Text style={styles.label}>Location:</Text>
                     <TextInput
                         style={styles.input}
+                        editable={editable}
                         placeholder="Location of the hike"
                         placeholderTextColor="#9CA3AF"
                         value={formData.location}
@@ -209,6 +316,7 @@ export default function EntryRecordScreen() {
                     <Text style={styles.label}>Length of the Hike (metres):</Text>
                     <TextInput
                         style={styles.input}
+                        editable={editable}
                         placeholder="Length of the hike"
                         keyboardType="numeric"
                         placeholderTextColor="#9CA3AF"
@@ -220,7 +328,8 @@ export default function EntryRecordScreen() {
                     <Text style={styles.label}>Date of the Hike:</Text>
                     <TouchableOpacity
                         style={styles.input}
-                        onPress={() => setShowDatePicker(true)}
+                        disabled={!editable}
+                        onPress={() => editable && setShowDatePicker(true)}
                     >
                         <Text>
                             {dateOfHike ? dateOfHike.toLocaleDateString() : "Select date"}
@@ -240,7 +349,10 @@ export default function EntryRecordScreen() {
                     <View style={styles.radioContainer}>
                         <TouchableOpacity
                             style={styles.radioButton}
-                            onPress={() => setFormData({ ...formData, parkingAvailable: true })}
+                            onPress={() =>
+                                editable &&
+                                setFormData({ ...formData, parkingAvailable: true })
+                            }
                         >
                             <View style={styles.radioOuter}>
                                 {formData.parkingAvailable && <View style={styles.radioInner} />}
@@ -248,7 +360,10 @@ export default function EntryRecordScreen() {
                             <Text
                                 style={[
                                     styles.radioText,
-                                    formData.parkingAvailable && { fontWeight: "600", color: "#2563EB" },
+                                    formData.parkingAvailable && {
+                                        fontWeight: "600",
+                                        color: "#2563EB",
+                                    },
                                 ]}
                             >
                                 Yes
@@ -257,7 +372,10 @@ export default function EntryRecordScreen() {
 
                         <TouchableOpacity
                             style={styles.radioButton}
-                            onPress={() => setFormData({ ...formData, parkingAvailable: false })}
+                            onPress={() =>
+                                editable &&
+                                setFormData({ ...formData, parkingAvailable: false })
+                            }
                         >
                             <View style={styles.radioOuter}>
                                 {!formData.parkingAvailable && <View style={styles.radioInner} />}
@@ -265,7 +383,10 @@ export default function EntryRecordScreen() {
                             <Text
                                 style={[
                                     styles.radioText,
-                                    !formData.parkingAvailable && { fontWeight: "600", color: "#2563EB" },
+                                    !formData.parkingAvailable && {
+                                        fontWeight: "600",
+                                        color: "#2563EB",
+                                    },
                                 ]}
                             >
                                 No
@@ -281,6 +402,7 @@ export default function EntryRecordScreen() {
                             placeholder="Hours"
                             keyboardType="numeric"
                             placeholderTextColor="#9CA3AF"
+                            editable={editable}
                             value={formData.hours}
                             onChangeText={(text) => setFormData({ ...formData, hours: text })}
                         />
@@ -289,10 +411,9 @@ export default function EntryRecordScreen() {
                             placeholder="Minutes"
                             keyboardType="numeric"
                             placeholderTextColor="#9CA3AF"
+                            editable={editable}
                             value={formData.minutes}
-                            onChangeText={(text) =>
-                                setFormData({ ...formData, minutes: text })
-                            }
+                            onChangeText={(text) => setFormData({ ...formData, minutes: text })}
                         />
                     </View>
 
@@ -303,6 +424,7 @@ export default function EntryRecordScreen() {
                         placeholder="Enter number of hikers"
                         keyboardType="numeric"
                         placeholderTextColor="#9CA3AF"
+                        editable={editable}
                         value={formData.hikers}
                         onChangeText={(text) => setFormData({ ...formData, hikers: text })}
                     />
@@ -313,6 +435,7 @@ export default function EntryRecordScreen() {
                         <Picker
                             selectedValue={difficulty}
                             onValueChange={(itemValue) => setDifficulty(itemValue)}
+                            enabled={editable}
                             style={styles.picker}
                         >
                             <Picker.Item label="Easy" value="Easy" />
@@ -329,15 +452,14 @@ export default function EntryRecordScreen() {
                         placeholderTextColor="#9CA3AF"
                         multiline
                         numberOfLines={4}
+                        editable={editable}
                         value={description}
                         onChangeText={setDescription}
                     />
 
                     {/* Observations */}
                     <View style={styles.addObservationBox}>
-                        <Text style={[styles.label, { marginTop: 20 }]}>
-                            Add Observations:
-                        </Text>
+                        <Text style={[styles.label, { marginTop: 20 }]}>Add Observations:</Text>
 
                         <View style={styles.observationBox}>
                             <Text style={styles.observationLabel}>Animal Sightings:</Text>
@@ -345,6 +467,7 @@ export default function EntryRecordScreen() {
                                 style={styles.observationInput}
                                 placeholder="Animal sights during hike"
                                 placeholderTextColor="#9CA3AF"
+                                editable={editable}
                                 value={formData.animalSightings}
                                 onChangeText={(text) =>
                                     setFormData({ ...formData, animalSightings: text })
@@ -356,6 +479,7 @@ export default function EntryRecordScreen() {
                                 style={styles.observationInput}
                                 placeholder="Vegetation types encountered during hike"
                                 placeholderTextColor="#9CA3AF"
+                                editable={editable}
                                 value={formData.vegetation}
                                 onChangeText={(text) =>
                                     setFormData({ ...formData, vegetation: text })
@@ -367,6 +491,7 @@ export default function EntryRecordScreen() {
                                 style={styles.observationInput}
                                 placeholder="Weather condition during hike"
                                 placeholderTextColor="#9CA3AF"
+                                editable={editable}
                                 value={formData.weather}
                                 onChangeText={(text) =>
                                     setFormData({ ...formData, weather: text })
@@ -378,6 +503,7 @@ export default function EntryRecordScreen() {
                                 style={styles.observationInput}
                                 placeholder="Trail condition during hike"
                                 placeholderTextColor="#9CA3AF"
+                                editable={editable}
                                 value={formData.trail}
                                 onChangeText={(text) =>
                                     setFormData({ ...formData, trail: text })
@@ -386,13 +512,11 @@ export default function EntryRecordScreen() {
                         </View>
 
                         {/* Time of Observation */}
-                        <Text style={[styles.label, { marginTop: 20 }]}>
-                            Time of Observation:
-                        </Text>
+                        <Text style={[styles.label, { marginTop: 20 }]}>Time of Observation:</Text>
                         <TextInput
                             style={styles.input}
                             value={timeOfObservation}
-                            editable={false}
+                            editable={false} // keep non-editable like original
                             placeholderTextColor="#9CA3AF"
                         />
 
@@ -404,21 +528,48 @@ export default function EntryRecordScreen() {
                             placeholderTextColor="#9CA3AF"
                             multiline
                             numberOfLines={3}
+                            editable={editable}
                             value={additionalComments}
                             onChangeText={setAdditionalComments}
                         />
                     </View>
 
                     {/* Buttons */}
-                    <TouchableOpacity
-                        style={styles.submitButton}
-                        onPress={handleSaveRecord}
-                    >
-                        <Text style={styles.submitText}>Save Record</Text>
-                    </TouchableOpacity>
+                    {!id && (
+                        <TouchableOpacity style={styles.submitButton} onPress={handleSaveRecord}>
+                            <Text style={styles.submitText}>Save Record</Text>
+                        </TouchableOpacity>
+                    )}
+
+                    {id && !isEditing && (
+                        <>
+                            <TouchableOpacity
+                                style={styles.submitButton}
+                                onPress={() => setIsEditing(true)}
+                            >
+                                <Text style={styles.submitText}>Edit Record</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.showRecordButton}
+                                onPress={confirmDelete}
+                            >
+                                <Text style={styles.submitText}>Delete Record</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+
+                    {id && isEditing && (
+                        <TouchableOpacity
+                            style={styles.submitButton}
+                            onPress={handleUpdateRecord}
+                        >
+                            <Text style={styles.submitText}>Update Record</Text>
+                        </TouchableOpacity>
+                    )}
 
                     <TouchableOpacity
-                        style={styles.showRecordButton}
+                        style={[styles.showRecordButton, { marginTop: 10 }]}
                         onPress={() => router.push("/home")}
                     >
                         <Text style={styles.submitText}>Show All Record</Text>
@@ -429,7 +580,7 @@ export default function EntryRecordScreen() {
     );
 }
 
-// ✅ Styles
+// Styles unchanged (kept from your design)
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#E0F0FF", paddingHorizontal: 15 },
     scrollContent: { paddingBottom: 30, alignItems: "center" },
@@ -486,10 +637,7 @@ const styles = StyleSheet.create({
         color: "#111827",
         backgroundColor: "#fff",
     },
-    textArea: {
-        height: 100,
-        textAlignVertical: "top",
-    },
+    textArea: { height: 100, textAlignVertical: "top" },
     radioContainer: {
         flexDirection: "row",
         alignItems: "center",
