@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
     View,
     Text,
@@ -18,19 +18,18 @@ export default function HomeScreen() {
     const router = useRouter();
     const [showSearch, setShowSearch] = useState(false);
     const [search, setSearch] = useState("");
-    const [entries, setEntries] = useState<any[]>([]); // ✅ Store hike records
+    const [entries, setEntries] = useState<any[]>([]);
 
     const formatDate = (dateString: string) => {
         if (!dateString) return "";
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString; // in case it’s already formatted
+        if (isNaN(date.getTime())) return dateString;
         const day = String(date.getDate()).padStart(2, "0");
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     };
 
-    // ✅ Load hike entries on mount
     useEffect(() => {
         const loadEntries = async () => {
             try {
@@ -48,6 +47,15 @@ export default function HomeScreen() {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setShowSearch(!showSearch);
     };
+
+    // ✅ Filter entries by search text
+    const filteredEntries = useMemo(() => {
+        const lower = search.toLowerCase();
+        return entries.filter((item) =>
+            [item.name, item.location, item.length?.toString(), formatDate(item.dateOfHike)]
+                .some((field) => field?.toLowerCase().includes(lower))
+        );
+    }, [entries, search]);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -103,12 +111,9 @@ export default function HomeScreen() {
                 style={{ width: "100%" }}
                 contentContainerStyle={{ alignItems: "center", paddingBottom: 30 }}
             >
-                {/* ✅ Display hike cards dynamically */}
-                {entries.map((item, index) => (
-                    <View
-                        key={item.id || index}
-                        style={[styles.cardContainer, !showSearch && { marginTop: 15 }]}
-                    >
+                {/* ✅ Display filtered cards */}
+                {filteredEntries.map((item, index) => (
+                    <View key={item.id || index} style={styles.cardContainer}>
                         <View style={styles.card}>
                             <View style={styles.row}>
                                 <Text style={styles.label}>Name of Hike:</Text>
@@ -138,7 +143,7 @@ export default function HomeScreen() {
                 ))}
 
                 {/* If no records */}
-                {entries.length === 0 && (
+                {filteredEntries.length === 0 && (
                     <Text style={{ marginTop: 40, color: "#6B7280" }}>
                         No hike records found.
                     </Text>
@@ -195,6 +200,7 @@ const styles = StyleSheet.create({
     cardContainer: {
         width: "100%",
         alignItems: "center",
+        marginTop: 15, // ✅ Always keep margin
     },
     card: {
         width: "90%",
