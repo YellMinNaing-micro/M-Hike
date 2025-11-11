@@ -7,13 +7,14 @@ import {
     StyleSheet,
     ScrollView,
     Platform,
+    Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
-import { getAllUsers } from "../lib/database";
+import { getAllUsers, insertEntry } from "../lib/database";
 import {
     Popover,
     PopoverBackdrop,
@@ -44,9 +45,45 @@ export default function EntryRecordScreen() {
         vegetation: "",
         weather: "",
         trail: "",
+        parkingAvailable: false,
     });
 
-    // ✅ Fetch username
+    const handleSaveRecord = async () => {
+        if (!formData.name.trim() || !formData.location.trim()) {
+            alert("Please fill in at least the name and location of the hike.");
+            return;
+        }
+
+        const { animalSightings, vegetation, weather, trail } = formData;
+        const hasAnyObservation =
+            animalSightings.trim() ||
+            vegetation.trim() ||
+            weather.trim() ||
+            trail.trim();
+
+        if (!hasAnyObservation) {
+            alert(
+                "Please fill at least one observation (animal, vegetation, weather, or trail)."
+            );
+            return;
+        }
+
+        const entryData = {
+            ...formData,
+            dateOfHike: dateOfHike.toISOString(),
+            parkingAvailable: formData.parkingAvailable,
+            difficulty,
+            description,
+            timeOfObservation,
+            additionalComments,
+        };
+
+        await insertEntry(entryData);
+        console.log(entryData);
+        alert("✅ Record saved successfully!");
+        handleClearAll();
+    };
+
     useEffect(() => {
         const loadUser = async () => {
             const users = await getAllUsers();
@@ -55,13 +92,11 @@ export default function EntryRecordScreen() {
         loadUser();
     }, []);
 
-    // ✅ Auto-set time of observation
     useEffect(() => {
         const now = new Date();
         setTimeOfObservation(now.toLocaleString());
     }, []);
 
-    // ✅ Clear All Fields (Form Reset)
     const handleClearAll = () => {
         setFormData({
             name: "",
@@ -74,6 +109,7 @@ export default function EntryRecordScreen() {
             vegetation: "",
             weather: "",
             trail: "",
+            parkingAvailable: true,
         });
         setDifficulty("Easy");
         setParkingAvailable(true);
@@ -84,7 +120,6 @@ export default function EntryRecordScreen() {
         setIsPopoverVisible(false);
     };
 
-    // ✅ Date Picker change handler
     const onChangeDate = (event: any, selectedDate?: Date) => {
         const currentDate = selectedDate || dateOfHike;
         setShowDatePicker(Platform.OS === "ios");
@@ -113,7 +148,6 @@ export default function EntryRecordScreen() {
                                     </Text>
                                     <Text style={styles.headerTitle}>Add New Hike Record</Text>
                                 </View>
-                                {/* ▼ Dropdown Icon */}
                                 <Text style={styles.dropdownIcon}>▼</Text>
                             </View>
                         </TouchableOpacity>
@@ -122,7 +156,7 @@ export default function EntryRecordScreen() {
                     <PopoverBackdrop />
                     <PopoverContent
                         style={{
-                            alignItems: "center", // ✅ Aligns to flex-end
+                            alignItems: "center",
                             paddingVertical: 10,
                             width: 90,
                         }}
@@ -148,15 +182,16 @@ export default function EntryRecordScreen() {
                     </PopoverContent>
                 </Popover>
 
-
                 {/* Form */}
                 <View style={styles.formBox}>
-                    {/* Name of Hike */}
+                    {/* Name */}
                     <Text style={styles.label}>Name of Hike:</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Name of the hike"
                         placeholderTextColor="#9CA3AF"
+                        value={formData.name}
+                        onChangeText={(text) => setFormData({ ...formData, name: text })}
                     />
 
                     {/* Location */}
@@ -165,6 +200,8 @@ export default function EntryRecordScreen() {
                         style={styles.input}
                         placeholder="Location of the hike"
                         placeholderTextColor="#9CA3AF"
+                        value={formData.location}
+                        onChangeText={(text) => setFormData({ ...formData, location: text })}
                     />
 
                     {/* Length */}
@@ -174,9 +211,11 @@ export default function EntryRecordScreen() {
                         placeholder="Length of the hike"
                         keyboardType="numeric"
                         placeholderTextColor="#9CA3AF"
+                        value={formData.length}
+                        onChangeText={(text) => setFormData({ ...formData, length: text })}
                     />
 
-                    {/* Date Picker */}
+                    {/* Date */}
                     <Text style={styles.label}>Date of the Hike:</Text>
                     <TouchableOpacity
                         style={styles.input}
@@ -200,15 +239,15 @@ export default function EntryRecordScreen() {
                     <View style={styles.radioContainer}>
                         <TouchableOpacity
                             style={styles.radioButton}
-                            onPress={() => setParkingAvailable(true)}
+                            onPress={() => setFormData({ ...formData, parkingAvailable: true })}
                         >
                             <View style={styles.radioOuter}>
-                                {parkingAvailable && <View style={styles.radioInner} />}
+                                {formData.parkingAvailable && <View style={styles.radioInner} />}
                             </View>
                             <Text
                                 style={[
                                     styles.radioText,
-                                    parkingAvailable && { fontWeight: "600", color: "#2563EB" },
+                                    formData.parkingAvailable && { fontWeight: "600", color: "#2563EB" },
                                 ]}
                             >
                                 Yes
@@ -217,15 +256,15 @@ export default function EntryRecordScreen() {
 
                         <TouchableOpacity
                             style={styles.radioButton}
-                            onPress={() => setParkingAvailable(false)}
+                            onPress={() => setFormData({ ...formData, parkingAvailable: false })}
                         >
                             <View style={styles.radioOuter}>
-                                {!parkingAvailable && <View style={styles.radioInner} />}
+                                {!formData.parkingAvailable && <View style={styles.radioInner} />}
                             </View>
                             <Text
                                 style={[
                                     styles.radioText,
-                                    !parkingAvailable && { fontWeight: "600", color: "#2563EB" },
+                                    !formData.parkingAvailable && { fontWeight: "600", color: "#2563EB" },
                                 ]}
                             >
                                 No
@@ -233,7 +272,7 @@ export default function EntryRecordScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Total Duration */}
+                    {/* Duration */}
                     <Text style={styles.label}>Total Duration (hours and minutes):</Text>
                     <View style={styles.durationContainer}>
                         <TextInput
@@ -241,12 +280,18 @@ export default function EntryRecordScreen() {
                             placeholder="Hours"
                             keyboardType="numeric"
                             placeholderTextColor="#9CA3AF"
+                            value={formData.hours}
+                            onChangeText={(text) => setFormData({ ...formData, hours: text })}
                         />
                         <TextInput
                             style={[styles.input, styles.durationInput]}
                             placeholder="Minutes"
                             keyboardType="numeric"
                             placeholderTextColor="#9CA3AF"
+                            value={formData.minutes}
+                            onChangeText={(text) =>
+                                setFormData({ ...formData, minutes: text })
+                            }
                         />
                     </View>
 
@@ -257,9 +302,11 @@ export default function EntryRecordScreen() {
                         placeholder="Enter number of hikers"
                         keyboardType="numeric"
                         placeholderTextColor="#9CA3AF"
+                        value={formData.hikers}
+                        onChangeText={(text) => setFormData({ ...formData, hikers: text })}
                     />
 
-                    {/* Level of Difficulty */}
+                    {/* Difficulty */}
                     <Text style={styles.label}>Level of Difficulty:</Text>
                     <View style={styles.pickerContainer}>
                         <Picker
@@ -285,9 +332,11 @@ export default function EntryRecordScreen() {
                         onChangeText={setDescription}
                     />
 
-                    {/* Add Observations */}
+                    {/* Observations */}
                     <View style={styles.addObservationBox}>
-                        <Text style={[styles.label, { marginTop: 20 }]}>Add Observations:</Text>
+                        <Text style={[styles.label, { marginTop: 20 }]}>
+                            Add Observations:
+                        </Text>
 
                         <View style={styles.observationBox}>
                             <Text style={styles.observationLabel}>Animal Sightings:</Text>
@@ -295,6 +344,10 @@ export default function EntryRecordScreen() {
                                 style={styles.observationInput}
                                 placeholder="Animal sights during hike"
                                 placeholderTextColor="#9CA3AF"
+                                value={formData.animalSightings}
+                                onChangeText={(text) =>
+                                    setFormData({ ...formData, animalSightings: text })
+                                }
                             />
 
                             <Text style={styles.observationLabel}>Types of Vegetation:</Text>
@@ -302,6 +355,10 @@ export default function EntryRecordScreen() {
                                 style={styles.observationInput}
                                 placeholder="Vegetation types encountered during hike"
                                 placeholderTextColor="#9CA3AF"
+                                value={formData.vegetation}
+                                onChangeText={(text) =>
+                                    setFormData({ ...formData, vegetation: text })
+                                }
                             />
 
                             <Text style={styles.observationLabel}>Weather Condition:</Text>
@@ -309,6 +366,10 @@ export default function EntryRecordScreen() {
                                 style={styles.observationInput}
                                 placeholder="Weather condition during hike"
                                 placeholderTextColor="#9CA3AF"
+                                value={formData.weather}
+                                onChangeText={(text) =>
+                                    setFormData({ ...formData, weather: text })
+                                }
                             />
 
                             <Text style={styles.observationLabel}>Trail Condition:</Text>
@@ -316,6 +377,10 @@ export default function EntryRecordScreen() {
                                 style={styles.observationInput}
                                 placeholder="Trail condition during hike"
                                 placeholderTextColor="#9CA3AF"
+                                value={formData.trail}
+                                onChangeText={(text) =>
+                                    setFormData({ ...formData, trail: text })
+                                }
                             />
                         </View>
 
@@ -326,10 +391,8 @@ export default function EntryRecordScreen() {
                         <TextInput
                             style={styles.input}
                             value={timeOfObservation}
-                            onChangeText={setTimeOfObservation}
-                            placeholder="Auto-filled with current date and time"
-                            placeholderTextColor="#9CA3AF"
                             editable={false}
+                            placeholderTextColor="#9CA3AF"
                         />
 
                         {/* Additional Comments */}
@@ -345,10 +408,14 @@ export default function EntryRecordScreen() {
                         />
                     </View>
 
-                    {/* Submit Button */}
-                    <TouchableOpacity style={styles.submitButton}>
+                    {/* Buttons */}
+                    <TouchableOpacity
+                        style={styles.submitButton}
+                        onPress={handleSaveRecord}
+                    >
                         <Text style={styles.submitText}>Save Record</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity
                         style={styles.showRecordButton}
                         onPress={() => router.push("/home")}
@@ -383,10 +450,13 @@ const styles = StyleSheet.create({
         color: "#111827",
         marginBottom: 4,
     },
-    headerTitle: {
-        fontSize: 15,
-        color: "#374151",
+    headerTitle: { fontSize: 15, color: "#374151" },
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
+    dropdownIcon: { fontSize: 18, color: "#374151" },
     formBox: {
         backgroundColor: "#fff",
         borderRadius: 15,
@@ -513,48 +583,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 12,
     },
-    submitText: {
-        color: "#fff",
-        fontWeight: "600",
-        fontSize: 15,
-    },
-    modalBackground: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.3)",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    popoverBox: {
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        padding: 20,
-        width: "80%",
-        alignItems: "center",
-    },
-    popoverLabel: { fontSize: 14, fontWeight: "500", marginBottom: 10 },
-    clearButton: {
-        backgroundColor: "#F87171",
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-        marginBottom: 10,
-    },
-    clearText: { color: "#fff", fontWeight: "600" },
-    closeButton: {
-        backgroundColor: "#2563EB",
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-    },
-    closeText: { color: "#fff", fontWeight: "600" },
-    headerRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-    dropdownIcon: {
-        fontSize: 18,
-        color: "#374151",
-        marginLeft: 8,
-    },
+    submitText: { color: "#fff", fontWeight: "600", fontSize: 15 },
 });
