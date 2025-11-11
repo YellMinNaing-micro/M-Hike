@@ -60,6 +60,7 @@ export default function EntryRecordScreen() {
         parkingAvailable: true,
     });
 
+
     const editable = !!(isEditing || !id);
 
     // Load logged-in user (for header welcome)
@@ -80,7 +81,7 @@ export default function EntryRecordScreen() {
         const loadRecord = async () => {
             try {
                 if (id) {
-                    const entry = await getEntryById(Number(id));
+                    const entry: any = await getEntryById(Number(id));
                     if (entry) {
                         setFormData({
                             name: entry.name || "",
