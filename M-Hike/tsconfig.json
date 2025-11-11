@@ -2,11 +2,12 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "types": [
-      "expo-router"
-    ] // ← add this line
+    "types": ["expo-router"]
   },
   "include": [
+    "app/**/*",
+    "data/**/*",
+    "lib/**/*",
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
