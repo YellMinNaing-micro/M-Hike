@@ -82,6 +82,7 @@ export default function EntryRecordScreen() {
         console.log(entryData);
         alert("✅ Record saved successfully!");
         handleClearAll();
+        router.replace("/home")
     };
 
     useEffect(() => {
