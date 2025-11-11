@@ -135,7 +135,11 @@ export default function HomeScreen() {
                                 <Text style={styles.value}>{formatDate(item.dateOfHike)}</Text>
                             </View>
 
-                            <TouchableOpacity style={styles.detailsButton}>
+                            {/* ✅ Route to detail screen with ID */}
+                            <TouchableOpacity
+                                style={styles.detailsButton}
+                                onPress={() => router.push(`/entry-record?id=${item.id}`)}
+                            >
                                 <Text style={styles.detailsText}>See More Details</Text>
                             </TouchableOpacity>
                         </View>
