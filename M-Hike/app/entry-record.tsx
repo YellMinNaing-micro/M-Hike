@@ -31,7 +31,7 @@ import { EntryFormData } from "../data/EntryFormData";
 
 export default function EntryRecordScreen() {
     const router = useRouter();
-    const { id } = useLocalSearchParams<{ id?: string }>(); // read ?id=xxx
+    const {id} = useLocalSearchParams<{ id?: string }>(); // read ?id=xxx
 
     // UI state
     const [user, setUser] = useState<any>(null);
@@ -153,7 +153,7 @@ export default function EntryRecordScreen() {
             Alert.alert("Validation", "Please fill in at least the name and location of the hike.");
             return false;
         }
-        const { animalSightings, vegetation, weather, trail } = formData;
+        const {animalSightings, vegetation, weather, trail} = formData;
         const hasAnyObservation =
             (animalSightings || "").trim() ||
             (vegetation || "").trim() ||
@@ -186,7 +186,7 @@ export default function EntryRecordScreen() {
         try {
             await insertEntry(entryData);
             Alert.alert("Success", "✅ Record saved successfully!", [
-                { text: "OK", onPress: () => router.replace("/home") },
+                {text: "OK", onPress: () => router.replace("/home")},
             ]);
         } catch (err) {
             console.error("Save error", err);
@@ -210,7 +210,7 @@ export default function EntryRecordScreen() {
         try {
             await updateEntry(Number(id), updatedData);
             Alert.alert("Success", "✅ Record updated successfully!", [
-                { text: "OK", onPress: () => router.replace("/home") },
+                {text: "OK", onPress: () => router.replace("/home")},
             ]);
         } catch (err) {
             console.error("Update error", err);
@@ -223,7 +223,7 @@ export default function EntryRecordScreen() {
             "Delete",
             "Are you sure you want to delete this record?",
             [
-                { text: "Cancel", style: "cancel" },
+                {text: "Cancel", style: "cancel"},
                 {
                     text: "Delete",
                     style: "destructive",
@@ -231,7 +231,7 @@ export default function EntryRecordScreen() {
                         try {
                             await deleteEntry(Number(id));
                             Alert.alert("Deleted", "🗑️ Record deleted successfully!", [
-                                { text: "OK", onPress: () => router.replace("/home") },
+                                {text: "OK", onPress: () => router.replace("/home")},
                             ]);
                         } catch (err) {
                             console.error("Delete error", err);
@@ -240,13 +240,13 @@ export default function EntryRecordScreen() {
                     },
                 },
             ],
-            { cancelable: true }
+            {cancelable: true}
         );
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" backgroundColor="#E0F0FF" />
+            <StatusBar style="dark" backgroundColor="#E0F0FF"/>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Header */}
@@ -273,16 +273,16 @@ export default function EntryRecordScreen() {
                         </TouchableOpacity>
                     )}
                 >
-                    <PopoverBackdrop />
+                    <PopoverBackdrop/>
                     <PopoverContent
-                        style={{ alignItems: "center", paddingVertical: 10, width: 90 }}
+                        style={{alignItems: "center", paddingVertical: 10, width: 90}}
                     >
-                        <PopoverArrow />
+                        <PopoverArrow/>
                         <TouchableOpacity
                             onPress={handleClearAll}
-                            style={{ paddingVertical: 6, paddingHorizontal: 10 }}
+                            style={{paddingVertical: 6, paddingHorizontal: 10}}
                         >
-                            <Text style={{ color: "#ef1717", fontWeight: "600", fontSize: 15 }}>
+                            <Text style={{color: "#ef1717", fontWeight: "600", fontSize: 15}}>
                                 Clear All
                             </Text>
                         </TouchableOpacity>
@@ -299,7 +299,7 @@ export default function EntryRecordScreen() {
                         placeholder="Name of the hike"
                         placeholderTextColor="#9CA3AF"
                         value={formData.name}
-                        onChangeText={(text) => setFormData({ ...formData, name: text })}
+                        onChangeText={(text) => setFormData({...formData, name: text})}
                     />
 
                     {/* Location */}
@@ -310,7 +310,7 @@ export default function EntryRecordScreen() {
                         placeholder="Location of the hike"
                         placeholderTextColor="#9CA3AF"
                         value={formData.location}
-                        onChangeText={(text) => setFormData({ ...formData, location: text })}
+                        onChangeText={(text) => setFormData({...formData, location: text})}
                     />
 
                     {/* Length */}
@@ -322,7 +322,7 @@ export default function EntryRecordScreen() {
                         keyboardType="numeric"
                         placeholderTextColor="#9CA3AF"
                         value={formData.length}
-                        onChangeText={(text) => setFormData({ ...formData, length: text })}
+                        onChangeText={(text) => setFormData({...formData, length: text})}
                     />
 
                     {/* Date */}
@@ -352,11 +352,11 @@ export default function EntryRecordScreen() {
                             style={styles.radioButton}
                             onPress={() =>
                                 editable &&
-                                setFormData({ ...formData, parkingAvailable: true })
+                                setFormData({...formData, parkingAvailable: true})
                             }
                         >
                             <View style={styles.radioOuter}>
-                                {formData.parkingAvailable && <View style={styles.radioInner} />}
+                                {formData.parkingAvailable && <View style={styles.radioInner}/>}
                             </View>
                             <Text
                                 style={[
@@ -375,11 +375,11 @@ export default function EntryRecordScreen() {
                             style={styles.radioButton}
                             onPress={() =>
                                 editable &&
-                                setFormData({ ...formData, parkingAvailable: false })
+                                setFormData({...formData, parkingAvailable: false})
                             }
                         >
                             <View style={styles.radioOuter}>
-                                {!formData.parkingAvailable && <View style={styles.radioInner} />}
+                                {!formData.parkingAvailable && <View style={styles.radioInner}/>}
                             </View>
                             <Text
                                 style={[
@@ -405,7 +405,7 @@ export default function EntryRecordScreen() {
                             placeholderTextColor="#9CA3AF"
                             editable={editable}
                             value={formData.hours}
-                            onChangeText={(text) => setFormData({ ...formData, hours: text })}
+                            onChangeText={(text) => setFormData({...formData, hours: text})}
                         />
                         <TextInput
                             style={[styles.input, styles.durationInput]}
@@ -414,7 +414,7 @@ export default function EntryRecordScreen() {
                             placeholderTextColor="#9CA3AF"
                             editable={editable}
                             value={formData.minutes}
-                            onChangeText={(text) => setFormData({ ...formData, minutes: text })}
+                            onChangeText={(text) => setFormData({...formData, minutes: text})}
                         />
                     </View>
 
@@ -427,7 +427,7 @@ export default function EntryRecordScreen() {
                         placeholderTextColor="#9CA3AF"
                         editable={editable}
                         value={formData.hikers}
-                        onChangeText={(text) => setFormData({ ...formData, hikers: text })}
+                        onChangeText={(text) => setFormData({...formData, hikers: text})}
                     />
 
                     {/* Difficulty */}
@@ -439,9 +439,9 @@ export default function EntryRecordScreen() {
                             enabled={editable}
                             style={styles.picker}
                         >
-                            <Picker.Item label="Easy" value="Easy" />
-                            <Picker.Item label="Moderate" value="Moderate" />
-                            <Picker.Item label="Hard" value="Hard" />
+                            <Picker.Item label="Easy" value="Easy"/>
+                            <Picker.Item label="Moderate" value="Moderate"/>
+                            <Picker.Item label="Hard" value="Hard"/>
                         </Picker>
                     </View>
 
@@ -460,7 +460,7 @@ export default function EntryRecordScreen() {
 
                     {/* Observations */}
                     <View style={styles.addObservationBox}>
-                        <Text style={[styles.label, { marginTop: 20 }]}>Add Observations:</Text>
+                        <Text style={[styles.label, {marginTop: 20}]}>Add Observations:</Text>
 
                         <View style={styles.observationBox}>
                             <Text style={styles.observationLabel}>Animal Sightings:</Text>
@@ -471,7 +471,7 @@ export default function EntryRecordScreen() {
                                 editable={editable}
                                 value={formData.animalSightings}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, animalSightings: text })
+                                    setFormData({...formData, animalSightings: text})
                                 }
                             />
 
@@ -483,7 +483,7 @@ export default function EntryRecordScreen() {
                                 editable={editable}
                                 value={formData.vegetation}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, vegetation: text })
+                                    setFormData({...formData, vegetation: text})
                                 }
                             />
 
@@ -495,7 +495,7 @@ export default function EntryRecordScreen() {
                                 editable={editable}
                                 value={formData.weather}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, weather: text })
+                                    setFormData({...formData, weather: text})
                                 }
                             />
 
@@ -507,13 +507,13 @@ export default function EntryRecordScreen() {
                                 editable={editable}
                                 value={formData.trail}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, trail: text })
+                                    setFormData({...formData, trail: text})
                                 }
                             />
                         </View>
 
                         {/* Time of Observation */}
-                        <Text style={[styles.label, { marginTop: 20 }]}>Time of Observation:</Text>
+                        <Text style={[styles.label, {marginTop: 20}]}>Time of Observation:</Text>
                         <TextInput
                             style={styles.input}
                             value={timeOfObservation}
@@ -570,7 +570,7 @@ export default function EntryRecordScreen() {
                     )}
 
                     <TouchableOpacity
-                        style={[styles.showRecordButton, { marginTop: 10 }]}
+                        style={[styles.showRecordButton, {marginTop: 10}]}
                         onPress={() => router.push("/home")}
                     >
                         <Text style={styles.submitText}>Show All Record</Text>
@@ -583,8 +583,8 @@ export default function EntryRecordScreen() {
 
 // Styles unchanged (kept from your design)
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#E0F0FF", paddingHorizontal: 15 },
-    scrollContent: { paddingBottom: 30, alignItems: "center" },
+    container: {flex: 1, backgroundColor: "#E0F0FF", paddingHorizontal: 15},
+    scrollContent: {paddingBottom: 30, alignItems: "center"},
     headerBox: {
         backgroundColor: "#fff",
         borderRadius: 12,
@@ -603,13 +603,13 @@ const styles = StyleSheet.create({
         color: "#111827",
         marginBottom: 4,
     },
-    headerTitle: { fontSize: 15, color: "#374151" },
+    headerTitle: {fontSize: 15, color: "#374151"},
     headerRow: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
     },
-    dropdownIcon: { fontSize: 18, color: "#374151" },
+    dropdownIcon: {fontSize: 18, color: "#374151"},
     formBox: {
         backgroundColor: "#fff",
         borderRadius: 15,
@@ -638,7 +638,7 @@ const styles = StyleSheet.create({
         color: "#111827",
         backgroundColor: "#fff",
     },
-    textArea: { height: 100, textAlignVertical: "top" },
+    textArea: {height: 100, textAlignVertical: "top"},
     radioContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -733,5 +733,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 12,
     },
-    submitText: { color: "#fff", fontWeight: "600", fontSize: 15 },
+    submitText: {color: "#fff", fontWeight: "600", fontSize: 15},
 });
