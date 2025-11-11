@@ -120,6 +120,13 @@ export default function EntryRecordScreen() {
     }, [id]);
 
     const handleClearAll = () => {
+        // Only allow clear when creating a new record
+        if (id) {
+            Alert.alert("Not Allowed", "You can only clear fields while creating a new record.");
+            return;
+        }
+
+        // Instantly reset everything
         setFormData({
             name: "",
             location: "",
@@ -139,7 +146,7 @@ export default function EntryRecordScreen() {
         setDateOfHike(new Date());
         setTimeOfObservation(new Date().toLocaleString());
         setIsPopoverVisible(false);
-        setIsEditing(false);
+
     };
 
     const onChangeDate = (event: any, selectedDate?: Date) => {
@@ -261,9 +268,9 @@ export default function EntryRecordScreen() {
                         >
                             <View style={styles.headerRow}>
                                 <View>
-                                    <Text style={styles.welcomeText}>
-                                        Welcome, {user ? user.username : "Loading..."}!
-                                    </Text>
+                                    {/*<Text style={styles.welcomeText}>*/}
+                                    {/*    Welcome, {user ? user.username : "Loading..."}!*/}
+                                    {/*</Text>*/}
                                     <Text style={styles.headerTitle}>
                                         {id ? "Hike Record Detail" : "Add New Hike Record"}
                                     </Text>
@@ -279,10 +286,21 @@ export default function EntryRecordScreen() {
                     >
                         <PopoverArrow/>
                         <TouchableOpacity
-                            onPress={handleClearAll}
-                            style={{paddingVertical: 6, paddingHorizontal: 10}}
+                            onPress={!id ? handleClearAll : undefined}
+                            disabled={!!id}
+                            style={{
+                                paddingVertical: 6,
+                                paddingHorizontal: 10,
+                                opacity: id ? 0.4 : 1,
+                            }}
                         >
-                            <Text style={{color: "#ef1717", fontWeight: "600", fontSize: 15}}>
+                            <Text
+                                style={{
+                                    color: id ? "#9CA3AF" : "#ef1717",
+                                    fontWeight: "600",
+                                    fontSize: 15,
+                                }}
+                            >
                                 Clear All
                             </Text>
                         </TouchableOpacity>
