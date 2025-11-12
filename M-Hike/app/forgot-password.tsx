@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
         top: 12,
     },
     resetBtn: {
-        backgroundColor: "#4F46E5",
+        backgroundColor: "#616161",
         borderRadius: 10,
         width: "100%",
         alignItems: "center",
