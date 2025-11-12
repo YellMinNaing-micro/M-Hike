@@ -54,10 +54,10 @@ export default function ProfileScreen() {
                     onPress={() => router.back()}
                     style={styles.iconButton}
                 >
-                    <Ionicons name="arrow-back-outline" size={26} color="#111827" />
+                    <Ionicons name="arrow-back-outline" size={26} color="#111827"/>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Profile</Text>
-                <View style={{ width: 26 }} />
+                <View style={{width: 26}}/>
             </View>
 
             {/* CONTENT */}
@@ -70,7 +70,7 @@ export default function ProfileScreen() {
                                 style={styles.input}
                                 value={user.username?.toString() || ""}
                                 editable={isEditing}
-                                onChangeText={(text) => setUser({ ...user, username: text })}
+                                onChangeText={(text) => setUser({...user, username: text})}
                                 placeholder="Username"
                             />
 
@@ -79,7 +79,7 @@ export default function ProfileScreen() {
                                 style={styles.input}
                                 value={user.email?.toString() || ""}
                                 editable={isEditing}
-                                onChangeText={(text) => setUser({ ...user, email: text })}
+                                onChangeText={(text) => setUser({...user, email: text})}
                                 placeholder="Email"
                             />
 
@@ -89,7 +89,7 @@ export default function ProfileScreen() {
                                     style={styles.passwordInput}
                                     value={user.password?.toString() || ""}
                                     editable={isEditing}
-                                    onChangeText={(text) => setUser({ ...user, password: text })}
+                                    onChangeText={(text) => setUser({...user, password: text})}
                                     secureTextEntry={!showPassword}
                                     placeholder="Password"
                                     placeholderTextColor="#9CA3AF"
@@ -123,8 +123,8 @@ export default function ProfileScreen() {
                                             "Confirm Update",
                                             "Are you sure you want to save the changes?",
                                             [
-                                                { text: "Cancel", style: "cancel" },
-                                                { text: "Yes", onPress: () => handleSave() },
+                                                {text: "Cancel", style: "cancel"},
+                                                {text: "Yes", onPress: () => handleSave()},
                                             ]
                                         );
                                     } else {
