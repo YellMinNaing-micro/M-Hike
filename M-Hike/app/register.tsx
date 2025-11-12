@@ -38,7 +38,7 @@ export default function RegisterScreen() {
         try {
             await insertUser(username, email, password);
             Alert.alert("✅ Success", "Account created successfully!", [
-                { text: "OK", onPress: () => router.push("/login") },
+                {text: "OK", onPress: () => router.push("/login")},
             ]);
 
             // reset form
@@ -55,7 +55,7 @@ export default function RegisterScreen() {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-                <StatusBar style="dark" backgroundColor="#E0F0FF" />
+                <StatusBar style="dark" backgroundColor="#E0F0FF"/>
 
                 <View style={styles.card}>
                     <Text style={styles.title}>Sign Up</Text>
@@ -138,10 +138,10 @@ export default function RegisterScreen() {
 
                     <View style={styles.socialRow}>
                         <TouchableOpacity>
-                            <Ionicons name="logo-google" size={28} color="#EA4335" />
+                            <Ionicons name="logo-google" size={28} color="#EA4335"/>
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Ionicons name="logo-facebook" size={28} color="#1877F2" />
+                            <Ionicons name="logo-facebook" size={28} color="#1877F2"/>
                         </TouchableOpacity>
                     </View>
 
@@ -173,14 +173,14 @@ const styles = StyleSheet.create({
         elevation: 5,
         alignItems: "center",
     },
-    title: { fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 5 },
+    title: {fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 5},
     subtitleRow: {
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 20,
     },
-    subtitle: { fontSize: 14, color: "#6B7280" },
-    signup: { color: "#4F46E5", fontWeight: "600" },
+    subtitle: {fontSize: 14, color: "#6B7280"},
+    signup: {color: "#4F46E5", fontWeight: "600"},
     inputBox: {
         width: "100%",
         marginBottom: 15,
@@ -191,8 +191,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         position: "relative",
     },
-    input: { height: 45, color: "#111827" },
-    eyeIcon: { position: "absolute", right: 10, top: 12 },
+    input: {height: 45, color: "#111827"},
+    eyeIcon: {position: "absolute", right: 10, top: 12},
     signupBtn: {
         backgroundColor: "#616161",
         borderRadius: 10,
@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         marginBottom: 15,
     },
-    signupText: { color: "#fff", fontWeight: "600", fontSize: 16 },
-    loginWith: { color: "#6B7280", marginBottom: 10 },
+    signupText: {color: "#fff", fontWeight: "600", fontSize: 16},
+    loginWith: {color: "#6B7280", marginBottom: 10},
     socialRow: {
         flexDirection: "row",
         justifyContent: "center",
