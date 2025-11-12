@@ -1,75 +1,55 @@
-import React, { useState } from "react";
+import React from "react";
 import {
     ImageBackground,
     StyleSheet,
-    TouchableOpacity,
     KeyboardAvoidingView,
     Platform,
     TouchableWithoutFeedback,
     Keyboard,
     View,
 } from "react-native";
-import {
-    Box,
-    Text,
-    Button,
-    ButtonText,
-    VStack,
-    HStack,
-} from "@gluestack-ui/themed";
+import { Box, Text, Button, ButtonText, VStack, HStack } from "@gluestack-ui/themed";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 
 export default function IndexScreen() {
     const router = useRouter();
-    const handleLogin = () => {
-        router.replace("/login");
-    };
-
-    const handleSignUp = () => {
-        router.replace("/register");
-    };
+    const handleLogin = () => router.replace("/login");
+    const handleSignUp = () => router.replace("/register");
 
     return (
         <KeyboardAvoidingView
             style={styles.container}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <StatusBar style="light" />
+            <StatusBar style="light"/>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <ImageBackground
-                    source={require("../assets/images/my-image/home.jpg")}
-                    style={styles.background}
-                    resizeMode="cover"
-                >
-                    <View style={styles.overlay} />
+                <View style={styles.container}>
+                    {/* Top 70% - Image */}
+                    <ImageBackground
+                        source={require("../assets/images/my-image/home.jpg")}
+                        style={styles.topSection}
+                        resizeMode="cover"
+                    >
+                        <View style={styles.overlay}/>
+                    </ImageBackground>
 
-                    <Box flex={1} justifyContent="flex-end" p="$5">
-                        <VStack space="lg" alignItems="center" mb="$10">
-                            <Text
-                                size="2xl"
-                                fontWeight="bold"
-                                textAlign="center"
-                                color="$white"
-                            >
-                                Take Only Memories While Leaving Only Footprints
+                    {/* Bottom 30% - Buttons & Text */}
+                    <Box flex={2} bg="$white" p="$5" justifyContent="center">
+                        <VStack space="lg" alignItems="center">
+                            <Text size="2xl" fontWeight="bold" textAlign="center" color="$black">
+                                Bring Back Only Memories Let Footprints Be Your Legacy.
                             </Text>
-                            <Text size="md" color="$coolGray200" textAlign="center">
+                            <Text size="md" color="$black" textAlign="center">
                                 Record your hike details and observations
                             </Text>
 
-                            {/* Buttons Row */}
-                            <HStack
-                                w="100%"
-                                justifyContent="space-evenly"
-                                alignItems="center"
-                                mt="$5"
-                            >
+                            <HStack w="100%" justifyContent="space-evenly" alignItems="center">
                                 <Button
                                     flex={1}
                                     size="lg"
-                                    bg="$indigo600"
-                                    rounded="$2xl"
+                                    bg="#616161"           // custom gray background
+                                    rounded="$full"
                                     mx="$2"
                                     onPress={handleLogin}
                                 >
@@ -79,19 +59,20 @@ export default function IndexScreen() {
                                 <Button
                                     flex={1}
                                     size="lg"
-                                    bg="$white"
-                                    rounded="$2xl"
-                                    borderColor="$indigo600"
+                                    bg="#616161"
+                                    rounded="$full"
+                                    borderColor="#616161"   // gray border
                                     borderWidth={1}
                                     mx="$2"
                                     onPress={handleSignUp}
                                 >
-                                    <ButtonText color="$indigo600">Sign Up</ButtonText>
+                                    <ButtonText color="$white">Sign Up</ButtonText>
                                 </Button>
                             </HStack>
+
                         </VStack>
                     </Box>
-                </ImageBackground>
+                </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     );
@@ -101,12 +82,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    background: {
-        flex: 1,
+    topSection: {
+        flex: 9, // 70%
         justifyContent: "flex-end",
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(0,0,0,0.3)", // soft dark overlay for readability
+        backgroundColor: "rgba(0,0,0,0.3)",
     },
 });
