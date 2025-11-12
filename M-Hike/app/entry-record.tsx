@@ -255,7 +255,7 @@ export default function EntryRecordScreen() {
         <SafeAreaView style={styles.container}>
             <StatusBar style="dark" backgroundColor="#E0F0FF"/>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <Popover
                     isOpen={isPopoverVisible}
@@ -738,14 +738,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     submitButton: {
-        backgroundColor: "#2563EB",
+        backgroundColor: "#616161",
         borderRadius: 100,
         marginTop: 20,
         alignItems: "center",
         paddingVertical: 12,
     },
     showRecordButton: {
-        backgroundColor: "#2563EB",
+        backgroundColor: "#616161",
         borderRadius: 100,
         marginTop: 10,
         alignItems: "center",
