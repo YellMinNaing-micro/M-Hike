@@ -180,50 +180,77 @@ export default function EntryRecordScreen() {
     const handleSaveRecord = async () => {
         if (!validateRequired()) return;
 
-        const entryData = {
-            ...formData,
-            dateOfHike: dateOfHike.toISOString(),
-            parkingAvailable: formData.parkingAvailable,
-            difficulty,
-            description,
-            timeOfObservation,
-            additionalComments,
-        };
+        Alert.alert(
+            "Confirm Create",
+            "Are you sure you want to create this record?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Create",
+                    onPress: async () => {
+                        const entryData = {
+                            ...formData,
+                            dateOfHike: dateOfHike.toISOString(),
+                            parkingAvailable: formData.parkingAvailable,
+                            difficulty,
+                            description,
+                            timeOfObservation,
+                            additionalComments,
+                        };
 
-        try {
-            await insertEntry(entryData);
-            Alert.alert("Success", "✅ Record saved successfully!", [
-                {text: "OK", onPress: () => router.replace("/home")},
-            ]);
-        } catch (err) {
-            console.error("Save error", err);
-            Alert.alert("Error", "Failed to save record.");
-        }
+                        try {
+                            await insertEntry(entryData);
+                            Alert.alert("Success", "✅ Record saved successfully!", [
+                                { text: "OK", onPress: () => router.replace("/home") },
+                            ]);
+                        } catch (err) {
+                            console.error("Save error", err);
+                            Alert.alert("Error", "Failed to save record.");
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     };
 
     const handleUpdateRecord = async () => {
         if (!validateRequired()) return;
 
-        const updatedData = {
-            ...formData,
-            dateOfHike: dateOfHike.toISOString(),
-            parkingAvailable: formData.parkingAvailable,
-            difficulty,
-            description,
-            timeOfObservation,
-            additionalComments,
-        };
+        Alert.alert(
+            "Confirm Update",
+            "Are you sure you want to update this record?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Update",
+                    onPress: async () => {
+                        const updatedData = {
+                            ...formData,
+                            dateOfHike: dateOfHike.toISOString(),
+                            parkingAvailable: formData.parkingAvailable,
+                            difficulty,
+                            description,
+                            timeOfObservation,
+                            additionalComments,
+                        };
 
-        try {
-            await updateEntry(Number(id), updatedData);
-            Alert.alert("Success", "✅ Record updated successfully!", [
-                {text: "OK", onPress: () => router.replace("/home")},
-            ]);
-        } catch (err) {
-            console.error("Update error", err);
-            Alert.alert("Error", "Failed to update record.");
-        }
+                        try {
+                            await updateEntry(Number(id), updatedData);
+                            Alert.alert("Success", "✅ Record updated successfully!", [
+                                { text: "OK", onPress: () => router.replace("/home") },
+                            ]);
+                        } catch (err) {
+                            console.error("Update error", err);
+                            Alert.alert("Error", "Failed to update record.");
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     };
+
 
     const confirmDelete = () => {
         Alert.alert(
