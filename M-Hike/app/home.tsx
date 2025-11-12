@@ -62,7 +62,8 @@ export default function HomeScreen() {
             <StatusBar style="dark" backgroundColor="#E0F0FF" />
 
             {/* Header */}
-            <View style={styles.header}>
+            {/* Header Card */}
+            <View style={styles.headerCard}>
                 <Text style={styles.headerTitle}>
                     Total Hike Records: {entries.length}
                 </Text>
@@ -72,21 +73,22 @@ export default function HomeScreen() {
                         style={styles.iconButton}
                         onPress={() => router.push("/profile")}
                     >
-                        <Ionicons name="person-circle-outline" size={26} color="#4F46E5" />
+                        <Ionicons name="person-circle-outline" size={26} color="#616161" />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         style={styles.iconButton}
                         onPress={() => router.push("/entry-record")}
                     >
-                        <Ionicons name="add-circle-outline" size={26} color="#4F46E5" />
+                        <Ionicons name="add-circle-outline" size={26} color="#616161" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
-                        <Ionicons name="search-outline" size={26} color="#4F46E5" />
+                        <Ionicons name="search-outline" size={26} color="#616161" />
                     </TouchableOpacity>
                 </View>
             </View>
+
 
             {/* Search Box */}
             {showSearch && (
@@ -164,11 +166,19 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 15,
     },
-    header: {
+    headerCard: {
         flexDirection: "row",
         justifyContent: "space-between",
-        width: "100%",
         alignItems: "center",
+        width: "100%",
+        backgroundColor: "#fff",
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        borderRadius: 12,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 3,
         marginTop: 10,
     },
     headerTitle: {
@@ -207,7 +217,7 @@ const styles = StyleSheet.create({
         marginTop: 15, // ✅ Always keep margin
     },
     card: {
-        width: "90%",
+        width: "100%",
         backgroundColor: "#fff",
         borderRadius: 15,
         paddingVertical: 20,
@@ -232,8 +242,8 @@ const styles = StyleSheet.create({
         color: "#374151",
     },
     detailsButton: {
-        backgroundColor: "#2563EB",
-        borderRadius: 10,
+        backgroundColor: "#616161",
+        borderRadius: 100,
         marginTop: 10,
         alignItems: "center",
         paddingVertical: 12,
