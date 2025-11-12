@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     input: { height: 45, color: "#111827" },
     eyeIcon: { position: "absolute", right: 10, top: 12 },
     signupBtn: {
-        backgroundColor: "#4F46E5",
+        backgroundColor: "#616161",
         borderRadius: 10,
         width: "100%",
         alignItems: "center",
