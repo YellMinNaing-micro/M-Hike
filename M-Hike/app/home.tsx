@@ -109,7 +109,7 @@ export default function HomeScreen() {
                 </View>
             )}
 
-            <ScrollView
+            <ScrollView showsVerticalScrollIndicator={false}
                 style={{ width: "100%" }}
                 contentContainerStyle={{ alignItems: "center", paddingBottom: 30 }}
             >
