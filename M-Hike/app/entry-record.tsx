@@ -184,7 +184,7 @@ export default function EntryRecordScreen() {
             "Confirm Create",
             "Are you sure you want to create this record?",
             [
-                { text: "Cancel", style: "cancel" },
+                {text: "Cancel", style: "cancel"},
                 {
                     text: "Create",
                     onPress: async () => {
@@ -201,7 +201,7 @@ export default function EntryRecordScreen() {
                         try {
                             await insertEntry(entryData);
                             Alert.alert("Success", "✅ Record saved successfully!", [
-                                { text: "OK", onPress: () => router.replace("/home") },
+                                {text: "OK", onPress: () => router.replace("/home")},
                             ]);
                         } catch (err) {
                             console.error("Save error", err);
@@ -210,7 +210,7 @@ export default function EntryRecordScreen() {
                     },
                 },
             ],
-            { cancelable: true }
+            {cancelable: true}
         );
     };
 
@@ -221,7 +221,7 @@ export default function EntryRecordScreen() {
             "Confirm Update",
             "Are you sure you want to update this record?",
             [
-                { text: "Cancel", style: "cancel" },
+                {text: "Cancel", style: "cancel"},
                 {
                     text: "Update",
                     onPress: async () => {
@@ -238,7 +238,7 @@ export default function EntryRecordScreen() {
                         try {
                             await updateEntry(Number(id), updatedData);
                             Alert.alert("Success", "✅ Record updated successfully!", [
-                                { text: "OK", onPress: () => router.replace("/home") },
+                                {text: "OK", onPress: () => router.replace("/home")},
                             ]);
                         } catch (err) {
                             console.error("Update error", err);
@@ -247,7 +247,7 @@ export default function EntryRecordScreen() {
                     },
                 },
             ],
-            { cancelable: true }
+            {cancelable: true}
         );
     };
 
