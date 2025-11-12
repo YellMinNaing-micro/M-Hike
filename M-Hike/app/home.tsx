@@ -6,7 +6,7 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
-    LayoutAnimation,
+    LayoutAnimation, Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -140,7 +140,17 @@ export default function HomeScreen() {
                             {/* ✅ Route to detail screen with ID */}
                             <TouchableOpacity
                                 style={styles.detailsButton}
-                                onPress={() => router.push(`/entry-record?id=${item.id}`)}
+                                onPress={() =>
+                                    Alert.alert(
+                                        "View Details",
+                                        `Are you sure you want to view details for "${item.name}"?`,
+                                        [
+                                            { text: "Cancel", style: "cancel" },
+                                            { text: "Yes", onPress: () => router.push(`/entry-record?id=${item.id}`) }
+                                        ],
+                                        { cancelable: true }
+                                    )
+                                }
                             >
                                 <Text style={styles.detailsText}>See More Details</Text>
                             </TouchableOpacity>
