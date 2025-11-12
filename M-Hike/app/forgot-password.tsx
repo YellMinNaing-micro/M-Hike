@@ -32,7 +32,7 @@ export default function ForgotPasswordScreen() {
             const success = await updatePassword(username, email, password);
             if (success) {
                 Alert.alert("✅ Password Reset Successful", "You can now log in.", [
-                    { text: "OK", onPress: () => router.push("/login") },
+                    {text: "OK", onPress: () => router.push("/login")},
                 ]);
             } else {
                 Alert.alert("❌ User Not Found", "Check your username and email.");
@@ -46,7 +46,7 @@ export default function ForgotPasswordScreen() {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
-                <StatusBar style="dark" backgroundColor="#E0F0FF" />
+                <StatusBar style="dark" backgroundColor="#E0F0FF"/>
 
                 <View style={styles.card}>
                     <Text style={styles.title}>Reset Password</Text>
