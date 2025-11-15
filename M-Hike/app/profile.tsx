@@ -11,8 +11,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { getAllUsers, updateUser } from "../lib/database";
+import { getUserById, updateUser, } from "../lib/database";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreen() {
     const router = useRouter();
@@ -21,13 +22,20 @@ export default function ProfileScreen() {
     const [showPassword, setShowPassword] = useState(false);
 
     // Load user from DB
-    useEffect(() => {
-        const loadUser = async () => {
-            const users = await getAllUsers();
-            if (users && users.length > 0) setUser(users[0]);
-        };
-        loadUser();
-    }, []);
+   useEffect(() => {
+    const loadUser = async () => {
+        const userId = await AsyncStorage.getItem("loggedInUserId");
+
+        if (!userId) return;
+
+        const dbUser = await getUserById(Number(userId));
+
+        if (dbUser) setUser(dbUser);
+    };
+
+    loadUser();
+}, []);
+
 
     // Save updated user
     const handleSave = async () => {
@@ -45,6 +53,12 @@ export default function ProfileScreen() {
             Alert.alert("Error", "Failed to update profile");
         }
     };
+
+    const handleLogout = async () =>{
+        await AsyncStorage.removeItem("loggedInUserId");
+router.replace("/login");
+
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -139,7 +153,7 @@ export default function ProfileScreen() {
 
                             <TouchableOpacity
                                 style={styles.button}
-                                onPress={() => router.push("/login")}
+                                onPress={() => handleLogout()}
                             >
                                 <Text style={styles.buttonText}>Log Out</Text>
                             </TouchableOpacity>
