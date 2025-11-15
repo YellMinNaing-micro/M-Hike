@@ -13,7 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { insertUser } from "../lib/database";
+import { getLastUser, insertUser } from "../lib/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen() {
     const router = useRouter();
@@ -54,21 +55,33 @@ export default function RegisterScreen() {
         return;
     }
 
-    try {
-        await insertUser(username, email, password);
-        Alert.alert("✅ Success", "Account created successfully!", [
-            { text: "OK", onPress: () => router.replace("/entry-record") },
-        ]);
+   try {
+    await insertUser(username, email, password);
 
-        // reset form
-        setUsername("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-    } catch (error) {
-        console.error("Signup Error:", error);
-        Alert.alert("❌ Error", "Something went wrong while saving your data.");
+    // Get the new user
+    const newUser = await getLastUser();
+
+    if (newUser) {
+        // Save session
+         // @ts-ignore
+        await AsyncStorage.setItem("loggedInUserId", newUser.id.toString());
     }
+
+    Alert.alert("✅ Success", "Account created successfully!", [
+        { text: "OK", onPress: () => router.replace("/entry-record") },
+    ]);
+
+    // Reset form
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+
+} catch (error) {
+    console.error("Signup Error:", error);
+    Alert.alert("❌ Error", "Something went wrong while saving your data.");
+}
+
 };
 
 
