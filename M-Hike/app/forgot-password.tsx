@@ -23,16 +23,41 @@ export default function ForgotPasswordScreen() {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleReset = async () => {
+
+        // --- REQUIRED VALIDATION ---
         if (!username || !email || !password) {
             Alert.alert("⚠️ Missing Fields", "Please fill all fields.");
             return;
         }
 
+        // --- EMAIL VALIDATION (@gmail.com only) ---
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        if (!emailRegex.test(email)) {
+            Alert.alert(
+                "❌ Invalid Email",
+                "Email must be a valid @gmail.com address."
+            );
+            return;
+        }
+
+        // --- PASSWORD VALIDATION ---
+        const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/;
+        const numberRegex = /\d/;
+
+        if (!passwordRegex.test(password) || !numberRegex.test(password)) {
+            Alert.alert(
+                "❌ Invalid Password",
+                "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed (optional)"
+            );
+            return;
+        }
+
         try {
             const success = await updatePassword(username, email, password);
+
             if (success) {
                 Alert.alert("✅ Password Reset Successful", "You can now log in.", [
-                    {text: "OK", onPress: () => router.push("/login")},
+                    { text: "OK", onPress: () => router.push("/login") }
                 ]);
             } else {
                 Alert.alert("❌ User Not Found", "Check your username and email.");
@@ -46,10 +71,11 @@ export default function ForgotPasswordScreen() {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
-                <StatusBar style="dark" backgroundColor="#E0F0FF"/>
+                <StatusBar style="dark" backgroundColor="#E0F0FF" />
 
                 <View style={styles.card}>
                     <Text style={styles.title}>Reset Password</Text>
+
                     <View style={styles.subtitleRow}>
                         <Text style={styles.subtitle}>Remember your password? </Text>
                         <TouchableOpacity onPress={() => router.push("/login")}>
@@ -57,6 +83,7 @@ export default function ForgotPasswordScreen() {
                         </TouchableOpacity>
                     </View>
 
+                    {/* Username */}
                     <View style={styles.inputBox}>
                         <TextInput
                             style={styles.input}
@@ -68,6 +95,7 @@ export default function ForgotPasswordScreen() {
                         />
                     </View>
 
+                    {/* Email */}
                     <View style={styles.inputBox}>
                         <TextInput
                             style={styles.input}
@@ -80,6 +108,7 @@ export default function ForgotPasswordScreen() {
                         />
                     </View>
 
+                    {/* Password */}
                     <View style={styles.inputBox}>
                         <TextInput
                             style={styles.input}
@@ -102,6 +131,7 @@ export default function ForgotPasswordScreen() {
                         </TouchableOpacity>
                     </View>
 
+                    {/* Reset Button */}
                     <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
                         <Text style={styles.resetText}>Reset Password</Text>
                     </TouchableOpacity>
