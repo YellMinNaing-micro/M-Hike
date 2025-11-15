@@ -24,33 +24,53 @@ export default function RegisterScreen() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleSignup = async () => {
-        if (!username || !email || !password || !confirmPassword) {
-            Alert.alert("⚠️ Missing Fields", "Please fill out all fields.");
-            return;
-        }
+   const handleSignup = async () => {
+    if (!username || !email || !password || !confirmPassword) {
+        Alert.alert("⚠️ Missing Fields", "Please fill out all fields.");
+        return;
+    }
 
-        if (password !== confirmPassword) {
-            Alert.alert("❌ Password Mismatch", "Passwords do not match.");
-            return;
-        }
+    // EMAIL VALIDATION (@gmail.com only)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!emailRegex.test(email)) {
+        Alert.alert("❌ Invalid Email", "Email must be a valid @gmail.com address.");
+        return;
+    }
 
-        try {
-            await insertUser(username, email, password);
-            Alert.alert("✅ Success", "Account created successfully!", [
-                {text: "OK", onPress: () => router.push("/login")},
-            ]);
+    // PASSWORD VALIDATION
+    const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/; 
+    const numberRegex = /\d/;
 
-            // reset form
-            setUsername("");
-            setEmail("");
-            setPassword("");
-            setConfirmPassword("");
-        } catch (error) {
-            console.error("Signup Error:", error);
-            Alert.alert("❌ Error", "Something went wrong while saving your data.");
-        }
-    };
+    if (!passwordRegex.test(password) || !numberRegex.test(password)) {
+        Alert.alert(
+            "❌ Invalid Password",
+            "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed (optional)"
+        );
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        Alert.alert("❌ Password Mismatch", "Passwords do not match.");
+        return;
+    }
+
+    try {
+        await insertUser(username, email, password);
+        Alert.alert("✅ Success", "Account created successfully!", [
+            { text: "OK", onPress: () => router.replace("/entry-record") },
+        ]);
+
+        // reset form
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+    } catch (error) {
+        console.error("Signup Error:", error);
+        Alert.alert("❌ Error", "Something went wrong while saving your data.");
+    }
+};
+
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
