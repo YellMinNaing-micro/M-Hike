@@ -15,6 +15,8 @@ import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { getUserByCredentials, logAllUsers } from "../lib/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -24,10 +26,29 @@ export default function LoginScreen() {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async () => {
-        if (!username || !email || !password) {
-            Alert.alert("⚠️ Missing Fields", "Please fill out all fields.");
-            return;
-        }
+    if (!username || !email || !password) {
+        Alert.alert("⚠️ Missing Fields", "Please fill out all fields.");
+        return;
+    }
+
+    // EMAIL VALIDATION (@gmail.com only)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!emailRegex.test(email)) {
+        Alert.alert("❌ Invalid Email", "Email must be a valid @gmail.com address.");
+        return;
+    }
+
+    // PASSWORD VALIDATION (same as register)
+    const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/;
+    const numberRegex = /\d/;
+
+    if (!passwordRegex.test(password) || !numberRegex.test(password)) {
+        Alert.alert(
+            "❌ Invalid Password",
+            "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed (optional)"
+        );
+        return;
+    }
 
         try {
             await logAllUsers();
@@ -35,22 +56,26 @@ export default function LoginScreen() {
 
             if (user) {
                 // @ts-ignore
+                  await AsyncStorage.setItem("loggedInUserId", user.id.toString());
+                // @ts-ignore
                 Alert.alert("✅ Login Successful", `Welcome, ${user.username}!`, [
-                    {text: "OK", onPress: () => router.replace("/home")}, // navigate to your home screen
+                    {text: "OK", onPress: () => router.replace("/entry-record")}, // navigate to your home screen
                 ]);
 
-                // optional: clear input fields
-                setUsername("");
-                setEmail("");
-                setPassword("");
-            } else {
-                Alert.alert("❌ Invalid Credentials", "Username, email, or password is incorrect.");
-            }
-        } catch (error) {
-            console.error("Login Error:", error);
-            Alert.alert("❌ Error", "Something went wrong while logging in.");
+
+            // clear input fields
+            setUsername("");
+            setEmail("");
+            setPassword("");
+        } else {
+            Alert.alert("❌ Invalid Credentials", "Username, email, or password is incorrect.");
         }
-    };
+    } catch (error) {
+        console.error("Login Error:", error);
+        Alert.alert("❌ Error", "Something went wrong while logging in.");
+    }
+};
+
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
