@@ -80,6 +80,11 @@ export const getUserById = async (id: number) => {
     return await db.getFirstAsync("SELECT * FROM users WHERE id = ?", [id]);
 };
 
+export const getLastUser = async () => {
+    const db = await openDB();
+    return await db.getFirstAsync("SELECT * FROM users ORDER BY id DESC LIMIT 1");
+};
+
 
 // ✅ Update password
 export const updatePassword = async (username: string, email: string, newPassword: string) => {
