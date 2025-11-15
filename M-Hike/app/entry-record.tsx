@@ -618,7 +618,7 @@ export default function EntryRecordScreen() {
                         style={[styles.showRecordButton, {marginTop: 10}]}
                         onPress={() => router.push("/home")}
                     >
-                        <Text style={styles.submitText}>Show All Record</Text>
+                        <Text style={styles.submitText}>Show All Records</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -760,7 +760,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 12,
         paddingVertical: 10,
-        fontSize: 14,
+        fontSize: 10,
         color: "#111827",
         backgroundColor: "#fff",
     },
