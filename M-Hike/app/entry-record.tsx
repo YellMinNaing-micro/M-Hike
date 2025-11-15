@@ -278,6 +278,17 @@ export default function EntryRecordScreen() {
         );
     };
 
+    // Allow only numbers
+const allowNumbersOnly = (text : string) => {
+  return text.replace(/[^0-9]/g, "");
+};
+
+// Allow letters, numbers, and spaces only (NO special characters)
+const allowTextOnly = (text : string) => {
+  return text.replace(/[^a-zA-Z0-9 ]/g, "");
+};
+
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="dark" backgroundColor="#E0F0FF"/>
@@ -344,7 +355,8 @@ export default function EntryRecordScreen() {
                         placeholder="Name of the hike"
                         placeholderTextColor="#9CA3AF"
                         value={formData.name}
-                        onChangeText={(text) => setFormData({...formData, name: text})}
+                         onChangeText={(text) =>
+        setFormData({ ...formData, name: allowTextOnly(text) })}
                     />
 
                     {/* Location */}
@@ -355,7 +367,9 @@ export default function EntryRecordScreen() {
                         placeholder="Location of the hike"
                         placeholderTextColor="#9CA3AF"
                         value={formData.location}
-                        onChangeText={(text) => setFormData({...formData, location: text})}
+                        onChangeText={(text) =>
+        setFormData({ ...formData, location: allowTextOnly(text) })
+    }
                     />
 
                     {/* Length */}
@@ -367,7 +381,9 @@ export default function EntryRecordScreen() {
                         keyboardType="numeric"
                         placeholderTextColor="#9CA3AF"
                         value={formData.length}
-                        onChangeText={(text) => setFormData({...formData, length: text})}
+                        onChangeText={(text) =>
+        setFormData({ ...formData, length: allowNumbersOnly(text) })
+    }
                     />
 
                     {/* Date */}
@@ -450,7 +466,9 @@ export default function EntryRecordScreen() {
                             placeholderTextColor="#9CA3AF"
                             editable={editable}
                             value={formData.hours}
-                            onChangeText={(text) => setFormData({...formData, hours: text})}
+                             onChangeText={(text) =>
+        setFormData({ ...formData, hours: allowNumbersOnly(text) })
+    }
                         />
                         <TextInput
                             style={[styles.input, styles.durationInput]}
@@ -459,7 +477,9 @@ export default function EntryRecordScreen() {
                             placeholderTextColor="#9CA3AF"
                             editable={editable}
                             value={formData.minutes}
-                            onChangeText={(text) => setFormData({...formData, minutes: text})}
+                             onChangeText={(text) =>
+        setFormData({ ...formData, minutes: allowNumbersOnly(text) })
+    }
                         />
                     </View>
 
@@ -472,7 +492,9 @@ export default function EntryRecordScreen() {
                         placeholderTextColor="#9CA3AF"
                         editable={editable}
                         value={formData.hikers}
-                        onChangeText={(text) => setFormData({...formData, hikers: text})}
+                       onChangeText={(text) =>
+        setFormData({ ...formData, hikers: allowNumbersOnly(text) })
+    }
                     />
 
                     {/* Difficulty */}
