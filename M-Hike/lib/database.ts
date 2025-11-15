@@ -75,6 +75,12 @@ export const getUserByCredentials = async (
     return result ?? null;
 };
 
+export const getUserById = async (id: number) => {
+    const db = await openDB();
+    return await db.getFirstAsync("SELECT * FROM users WHERE id = ?", [id]);
+};
+
+
 // ✅ Update password
 export const updatePassword = async (username: string, email: string, newPassword: string) => {
     try {
