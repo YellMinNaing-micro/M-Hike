@@ -39,20 +39,46 @@ export default function ProfileScreen() {
 
     // Save updated user
     const handleSave = async () => {
-        if (!user) return;
-        if (!user.username || !user.email || !user.password) {
-            Alert.alert("Error", "Please fill in all fields");
-            return;
-        }
+    if (!user) return;
 
-        const success = await updateUser(user);
-        if (success) {
-            Alert.alert("Success", "Profile updated successfully");
-            setIsEditing(false);
-        } else {
-            Alert.alert("Error", "Failed to update profile");
-        }
-    };
+    const { username, email, password } = user;
+
+    // EMPTY CHECK
+    if (!username || !email || !password) {
+        Alert.alert("⚠️ Missing Fields", "Please fill in all fields.");
+        return;
+    }
+
+    // EMAIL VALIDATION (@gmail.com only)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!emailRegex.test(email)) {
+        Alert.alert("❌ Invalid Email", "Email must be a valid @gmail.com address.");
+        return;
+    }
+
+    // PASSWORD VALIDATION (same as register)
+    const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/;
+    const numberRegex = /\d/;
+
+    if (!passwordRegex.test(password) || !numberRegex.test(password)) {
+        Alert.alert(
+            "❌ Invalid Password",
+            "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed"
+        );
+        return;
+    }
+
+    // UPDATE USER IN DB
+    const success = await updateUser(user);
+
+    if (success) {
+        Alert.alert("✅ Success", "Profile updated successfully");
+        setIsEditing(false);
+    } else {
+        Alert.alert("❌ Error", "Failed to update profile");
+    }
+};
+
 
     const handleLogout = async () =>{
         await AsyncStorage.removeItem("loggedInUserId");
