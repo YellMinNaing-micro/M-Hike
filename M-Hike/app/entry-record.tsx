@@ -31,7 +31,7 @@ import { EntryFormData } from "../data/EntryFormData";
 
 export default function EntryRecordScreen() {
     const router = useRouter();
-    const {id} = useLocalSearchParams<{ id?: string }>(); // read ?id=xxx
+    const { id } = useLocalSearchParams<{ id?: string }>(); // read ?id=xxx
 
     // UI state
     const [user, setUser] = useState<any>(null);
@@ -160,7 +160,7 @@ export default function EntryRecordScreen() {
             Alert.alert("Validation", "Please fill in at least the name and location of the hike.");
             return false;
         }
-        const {animalSightings, vegetation, weather, trail} = formData;
+        const { animalSightings, vegetation, weather, trail } = formData;
         const hasAnyObservation =
             (animalSightings || "").trim() ||
             (vegetation || "").trim() ||
@@ -181,10 +181,27 @@ export default function EntryRecordScreen() {
         if (!validateRequired()) return;
 
         Alert.alert(
-            "Confirm Create",
-            "Are you sure you want to create this record?",
+            "Create Confirmation",
+            `Name of Hike: ${formData.name}
+Location: ${formData.location}
+Length: ${formData.length} metres
+Date: ${dateOfHike.toLocaleDateString()}
+Parking Availability: ${formData.parkingAvailable ? "Yes" : "No"}
+Duration: ${formData.hours} Hours ${formData.minutes} Minutes
+Number of Hikers: ${formData.hikers}
+Difficulty: ${difficulty}
+
+Observations:
+- Animal Sightings: ${formData.animalSightings || "-"}
+- Vegetation Types: ${formData.vegetation || "-"}
+- Weather Condition: ${formData.weather || "-"}
+- Trail Condition: ${formData.trail || "-"}
+- Time of Observation: ${timeOfObservation}
+
+Additional Comments: ${additionalComments || "-"}
+`,
             [
-                {text: "Cancel", style: "cancel"},
+                { text: "Cancel", style: "cancel" },
                 {
                     text: "Create",
                     onPress: async () => {
@@ -200,28 +217,46 @@ export default function EntryRecordScreen() {
 
                         try {
                             await insertEntry(entryData);
-                            Alert.alert("Success", "✅ Record saved successfully!", [
-                                {text: "OK", onPress: () => router.replace("/home")},
+                            Alert.alert("Success", "✅ Record created successfully!", [
+                                { text: "OK", onPress: () => router.replace("/home") },
                             ]);
                         } catch (err) {
                             console.error("Save error", err);
-                            Alert.alert("Error", "Failed to save record.");
+                            Alert.alert("Error", "Failed to create record.");
                         }
                     },
                 },
             ],
-            {cancelable: true}
+            { cancelable: true }
         );
+
     };
 
     const handleUpdateRecord = async () => {
         if (!validateRequired()) return;
 
         Alert.alert(
-            "Confirm Update",
-            "Are you sure you want to update this record?",
+            "Update Confirmation",
+            `Name of Hike: ${formData.name}
+Location: ${formData.location}
+Length: ${formData.length} metres
+Date: ${dateOfHike.toLocaleDateString()}
+Parking Availability: ${formData.parkingAvailable ? "Yes" : "No"}
+Duration: ${formData.hours} Hours ${formData.minutes} Minutes
+Number of Hikers: ${formData.hikers}
+Difficulty: ${difficulty}
+
+Observations:
+- Animal Sightings: ${formData.animalSightings || "-"}
+- Vegetation Types: ${formData.vegetation || "-"}
+- Weather Condition: ${formData.weather || "-"}
+- Trail Condition: ${formData.trail || "-"}
+- Time of Observation: ${timeOfObservation}
+
+Additional Comments: ${additionalComments || "-"}
+`,
             [
-                {text: "Cancel", style: "cancel"},
+                { text: "Cancel", style: "cancel" },
                 {
                     text: "Update",
                     onPress: async () => {
@@ -238,7 +273,7 @@ export default function EntryRecordScreen() {
                         try {
                             await updateEntry(Number(id), updatedData);
                             Alert.alert("Success", "✅ Record updated successfully!", [
-                                {text: "OK", onPress: () => router.replace("/home")},
+                                { text: "OK", onPress: () => router.replace("/home") },
                             ]);
                         } catch (err) {
                             console.error("Update error", err);
@@ -247,7 +282,7 @@ export default function EntryRecordScreen() {
                     },
                 },
             ],
-            {cancelable: true}
+            { cancelable: true }
         );
     };
 
@@ -257,7 +292,7 @@ export default function EntryRecordScreen() {
             "Delete",
             "Are you sure you want to delete this record?",
             [
-                {text: "Cancel", style: "cancel"},
+                { text: "Cancel", style: "cancel" },
                 {
                     text: "Delete",
                     style: "destructive",
@@ -265,7 +300,7 @@ export default function EntryRecordScreen() {
                         try {
                             await deleteEntry(Number(id));
                             Alert.alert("Deleted", "🗑️ Record deleted successfully!", [
-                                {text: "OK", onPress: () => router.replace("/home")},
+                                { text: "OK", onPress: () => router.replace("/home") },
                             ]);
                         } catch (err) {
                             console.error("Delete error", err);
@@ -274,24 +309,24 @@ export default function EntryRecordScreen() {
                     },
                 },
             ],
-            {cancelable: true}
+            { cancelable: true }
         );
     };
 
     // Allow only numbers
-const allowNumbersOnly = (text : string) => {
-  return text.replace(/[^0-9]/g, "");
-};
+    const allowNumbersOnly = (text: string) => {
+        return text.replace(/[^0-9]/g, "");
+    };
 
-// Allow letters, numbers, and spaces only (NO special characters)
-const allowTextOnly = (text : string) => {
-  return text.replace(/[^a-zA-Z0-9 ]/g, "");
-};
+    // Allow letters, numbers, and spaces only (NO special characters)
+    const allowTextOnly = (text: string) => {
+        return text.replace(/[^a-zA-Z0-9 ]/g, "");
+    };
 
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" backgroundColor="#E0F0FF"/>
+            <StatusBar style="dark" backgroundColor="#E0F0FF" />
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
@@ -318,11 +353,11 @@ const allowTextOnly = (text : string) => {
                         </TouchableOpacity>
                     )}
                 >
-                    <PopoverBackdrop/>
+                    <PopoverBackdrop />
                     <PopoverContent
-                        style={{alignItems: "center", paddingVertical: 10, width: 90}}
+                        style={{ alignItems: "center", paddingVertical: 10, width: 90 }}
                     >
-                        <PopoverArrow/>
+                        <PopoverArrow />
                         <TouchableOpacity
                             onPress={!id ? handleClearAll : undefined}
                             disabled={!!id}
@@ -355,8 +390,8 @@ const allowTextOnly = (text : string) => {
                         placeholder="Name of the hike"
                         placeholderTextColor="#9CA3AF"
                         value={formData.name}
-                         onChangeText={(text) =>
-        setFormData({ ...formData, name: allowTextOnly(text) })}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, name: allowTextOnly(text) })}
                     />
 
                     {/* Location */}
@@ -368,8 +403,8 @@ const allowTextOnly = (text : string) => {
                         placeholderTextColor="#9CA3AF"
                         value={formData.location}
                         onChangeText={(text) =>
-        setFormData({ ...formData, location: allowTextOnly(text) })
-    }
+                            setFormData({ ...formData, location: allowTextOnly(text) })
+                        }
                     />
 
                     {/* Length */}
@@ -382,8 +417,8 @@ const allowTextOnly = (text : string) => {
                         placeholderTextColor="#9CA3AF"
                         value={formData.length}
                         onChangeText={(text) =>
-        setFormData({ ...formData, length: allowNumbersOnly(text) })
-    }
+                            setFormData({ ...formData, length: allowNumbersOnly(text) })
+                        }
                     />
 
                     {/* Date */}
@@ -413,11 +448,11 @@ const allowTextOnly = (text : string) => {
                             style={styles.radioButton}
                             onPress={() =>
                                 editable &&
-                                setFormData({...formData, parkingAvailable: true})
+                                setFormData({ ...formData, parkingAvailable: true })
                             }
                         >
                             <View style={styles.radioOuter}>
-                                {formData.parkingAvailable && <View style={styles.radioInner}/>}
+                                {formData.parkingAvailable && <View style={styles.radioInner} />}
                             </View>
                             <Text
                                 style={[
@@ -436,11 +471,11 @@ const allowTextOnly = (text : string) => {
                             style={styles.radioButton}
                             onPress={() =>
                                 editable &&
-                                setFormData({...formData, parkingAvailable: false})
+                                setFormData({ ...formData, parkingAvailable: false })
                             }
                         >
                             <View style={styles.radioOuter}>
-                                {!formData.parkingAvailable && <View style={styles.radioInner}/>}
+                                {!formData.parkingAvailable && <View style={styles.radioInner} />}
                             </View>
                             <Text
                                 style={[
@@ -466,9 +501,9 @@ const allowTextOnly = (text : string) => {
                             placeholderTextColor="#9CA3AF"
                             editable={editable}
                             value={formData.hours}
-                             onChangeText={(text) =>
-        setFormData({ ...formData, hours: allowNumbersOnly(text) })
-    }
+                            onChangeText={(text) =>
+                                setFormData({ ...formData, hours: allowNumbersOnly(text) })
+                            }
                         />
                         <TextInput
                             style={[styles.input, styles.durationInput]}
@@ -477,9 +512,9 @@ const allowTextOnly = (text : string) => {
                             placeholderTextColor="#9CA3AF"
                             editable={editable}
                             value={formData.minutes}
-                             onChangeText={(text) =>
-        setFormData({ ...formData, minutes: allowNumbersOnly(text) })
-    }
+                            onChangeText={(text) =>
+                                setFormData({ ...formData, minutes: allowNumbersOnly(text) })
+                            }
                         />
                     </View>
 
@@ -492,9 +527,9 @@ const allowTextOnly = (text : string) => {
                         placeholderTextColor="#9CA3AF"
                         editable={editable}
                         value={formData.hikers}
-                       onChangeText={(text) =>
-        setFormData({ ...formData, hikers: allowNumbersOnly(text) })
-    }
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, hikers: allowNumbersOnly(text) })
+                        }
                     />
 
                     {/* Difficulty */}
@@ -506,9 +541,9 @@ const allowTextOnly = (text : string) => {
                             enabled={editable}
                             style={styles.picker}
                         >
-                            <Picker.Item label="Easy" value="Easy"/>
-                            <Picker.Item label="Moderate" value="Moderate"/>
-                            <Picker.Item label="Hard" value="Hard"/>
+                            <Picker.Item label="Easy" value="Easy" />
+                            <Picker.Item label="Moderate" value="Moderate" />
+                            <Picker.Item label="Hard" value="Hard" />
                         </Picker>
                     </View>
 
@@ -527,7 +562,7 @@ const allowTextOnly = (text : string) => {
 
                     {/* Observations */}
                     <View style={styles.addObservationBox}>
-                        <Text style={[styles.label, {marginTop: 20}]}>Add Observations:</Text>
+                        <Text style={[styles.label, { marginTop: 20 }]}>Add Observations:</Text>
 
                         <View style={styles.observationBox}>
                             <Text style={styles.observationLabel}>Animal Sightings:</Text>
@@ -538,7 +573,7 @@ const allowTextOnly = (text : string) => {
                                 editable={editable}
                                 value={formData.animalSightings}
                                 onChangeText={(text) =>
-                                    setFormData({...formData, animalSightings: text})
+                                    setFormData({ ...formData, animalSightings: text })
                                 }
                             />
 
@@ -550,7 +585,7 @@ const allowTextOnly = (text : string) => {
                                 editable={editable}
                                 value={formData.vegetation}
                                 onChangeText={(text) =>
-                                    setFormData({...formData, vegetation: text})
+                                    setFormData({ ...formData, vegetation: text })
                                 }
                             />
 
@@ -562,7 +597,7 @@ const allowTextOnly = (text : string) => {
                                 editable={editable}
                                 value={formData.weather}
                                 onChangeText={(text) =>
-                                    setFormData({...formData, weather: text})
+                                    setFormData({ ...formData, weather: text })
                                 }
                             />
 
@@ -574,13 +609,13 @@ const allowTextOnly = (text : string) => {
                                 editable={editable}
                                 value={formData.trail}
                                 onChangeText={(text) =>
-                                    setFormData({...formData, trail: text})
+                                    setFormData({ ...formData, trail: text })
                                 }
                             />
                         </View>
 
                         {/* Time of Observation */}
-                        <Text style={[styles.label, {marginTop: 20}]}>Time of Observation:</Text>
+                        <Text style={[styles.label, { marginTop: 20 }]}>Time of Observation:</Text>
                         <TextInput
                             style={styles.input}
                             value={timeOfObservation}
@@ -637,7 +672,7 @@ const allowTextOnly = (text : string) => {
                     )}
 
                     <TouchableOpacity
-                        style={[styles.showRecordButton, {marginTop: 10}]}
+                        style={[styles.showRecordButton, { marginTop: 10 }]}
                         onPress={() => router.push("/home")}
                     >
                         <Text style={styles.submitText}>Show All Records</Text>
@@ -650,8 +685,8 @@ const allowTextOnly = (text : string) => {
 
 // Styles unchanged (kept from your design)
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: "#E0F0FF", paddingHorizontal: 15},
-    scrollContent: {paddingBottom: 30, alignItems: "center"},
+    container: { flex: 1, backgroundColor: "#E0F0FF", paddingHorizontal: 15 },
+    scrollContent: { paddingBottom: 30, alignItems: "center" },
     headerBox: {
         backgroundColor: "#fff",
         borderRadius: 12,
@@ -670,13 +705,13 @@ const styles = StyleSheet.create({
         color: "#111827",
         marginBottom: 4,
     },
-    headerTitle: {fontSize: 15, color: "#374151"},
+    headerTitle: { fontSize: 15, color: "#374151" },
     headerRow: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
     },
-    dropdownIcon: {fontSize: 18, color: "#374151"},
+    dropdownIcon: { fontSize: 18, color: "#374151" },
     formBox: {
         backgroundColor: "#fff",
         borderRadius: 15,
@@ -705,7 +740,7 @@ const styles = StyleSheet.create({
         color: "#111827",
         backgroundColor: "#fff",
     },
-    textArea: {height: 100, textAlignVertical: "top"},
+    textArea: { height: 100, textAlignVertical: "top" },
     radioContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -800,5 +835,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 12,
     },
-    submitText: {color: "#fff", fontWeight: "600", fontSize: 15},
+    submitText: { color: "#fff", fontWeight: "600", fontSize: 15 },
 });
