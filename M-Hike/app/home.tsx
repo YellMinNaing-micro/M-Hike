@@ -59,13 +59,18 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" backgroundColor="#E0F0FF"/>
+            <StatusBar style="dark" backgroundColor="#E0F0FF" />
 
             {/* Header */}
             {/* Header Card */}
             <View style={styles.headerCard}>
                 <Text style={styles.headerTitle}>
-                    Total Hike Records: {entries.length}
+                    {search.trim().length === 0
+                        ? `Total Hike Records: ${entries.length}`
+                        : filteredEntries.length === 0
+                            ? "No Hike Records Found"
+                            : `Matching Records: ${filteredEntries.length}`
+                    }
                 </Text>
 
                 <View style={styles.headerIcons}>
@@ -73,18 +78,18 @@ export default function HomeScreen() {
                         style={styles.iconButton}
                         onPress={() => router.push("/profile")}
                     >
-                        <Ionicons name="person-circle-outline" size={26} color="#616161"/>
+                        <Ionicons name="person-circle-outline" size={26} color="#616161" />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         style={styles.iconButton}
                         onPress={() => router.push("/entry-record")}
                     >
-                        <Ionicons name="add-circle-outline" size={26} color="#616161"/>
+                        <Ionicons name="add-circle-outline" size={26} color="#616161" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
-                        <Ionicons name="search-outline" size={26} color="#616161"/>
+                        <Ionicons name="search-outline" size={26} color="#616161" />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -97,7 +102,7 @@ export default function HomeScreen() {
                         name="search-outline"
                         size={18}
                         color="#6B7280"
-                        style={{marginRight: 6}}
+                        style={{ marginRight: 6 }}
                     />
                     <TextInput
                         placeholder="Search by hike's name, location, length, or date"
@@ -110,8 +115,8 @@ export default function HomeScreen() {
             )}
 
             <ScrollView showsVerticalScrollIndicator={false}
-                        style={{width: "100%"}}
-                        contentContainerStyle={{alignItems: "center", paddingBottom: 30}}
+                style={{ width: "100%" }}
+                contentContainerStyle={{ alignItems: "center", paddingBottom: 30 }}
             >
                 {/* ✅ Display filtered cards */}
                 {filteredEntries.map((item, index) => (
@@ -145,10 +150,10 @@ export default function HomeScreen() {
                                         "View Details",
                                         `Are you sure you want to view details for "${item.name}"?`,
                                         [
-                                            {text: "Cancel", style: "cancel"},
-                                            {text: "Yes", onPress: () => router.push(`/entry-record?id=${item.id}`)}
+                                            { text: "Cancel", style: "cancel" },
+                                            { text: "Yes", onPress: () => router.push(`/entry-record?id=${item.id}`) }
                                         ],
-                                        {cancelable: true}
+                                        { cancelable: true }
                                     )
                                 }
                             >
@@ -160,7 +165,7 @@ export default function HomeScreen() {
 
                 {/* If no records */}
                 {filteredEntries.length === 0 && (
-                    <Text style={{marginTop: 40, color: "#6B7280"}}>
+                    <Text style={{ marginTop: 40, color: "#6B7280" }}>
                         No hike records found.
                     </Text>
                 )}
