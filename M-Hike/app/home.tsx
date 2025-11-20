@@ -118,7 +118,7 @@ export default function HomeScreen() {
                 style={{ width: "100%" }}
                 contentContainerStyle={{ alignItems: "center", paddingBottom: 30 }}
             >
-                {/* ✅ Display filtered cards */}
+                {/* Display filtered cards */}
                 {filteredEntries.map((item, index) => (
                     <View key={item.id || index} style={styles.cardContainer}>
                         <View style={styles.card}>
@@ -142,7 +142,7 @@ export default function HomeScreen() {
                                 <Text style={styles.value}>{formatDate(item.dateOfHike)}</Text>
                             </View>
 
-                            {/* ✅ Route to detail screen with ID */}
+                            {/*  Route to detail screen with ID */}
                             <TouchableOpacity
                                 style={styles.detailsButton}
                                 onPress={() =>
