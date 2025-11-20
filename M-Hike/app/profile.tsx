@@ -45,14 +45,14 @@ export default function ProfileScreen() {
 
         // EMPTY CHECK
         if (!username || !email || !password) {
-            Alert.alert("⚠️ Missing Fields", "Please fill in all fields.");
+            Alert.alert(" Missing Fields", "Please fill in all fields.");
             return;
         }
 
         // EMAIL VALIDATION (@gmail.com only)
         const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
         if (!emailRegex.test(email)) {
-            Alert.alert("❌ Invalid Email", "Email must be a valid @gmail.com address.");
+            Alert.alert(" Invalid Email", "Email must be a valid @gmail.com address.");
             return;
         }
 
@@ -62,7 +62,7 @@ export default function ProfileScreen() {
 
         if (!passwordRegex.test(password) || !numberRegex.test(password)) {
             Alert.alert(
-                "❌ Invalid Password",
+                " Invalid Password",
                 "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed"
             );
             return;
@@ -72,10 +72,10 @@ export default function ProfileScreen() {
         const success = await updateUser(user);
 
         if (success) {
-            Alert.alert("✅ Success", "Profile updated successfully");
+            Alert.alert(" Success", "Profile updated successfully");
             setIsEditing(false);
         } else {
-            Alert.alert("❌ Error", "Failed to update profile");
+            Alert.alert(" Error", "Failed to update profile");
         }
     };
 
