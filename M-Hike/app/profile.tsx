@@ -171,13 +171,14 @@ export default function ProfileScreen() {
                                         // Build confirmation message
                                         const changesMessage = `Username: ${user.username} ${user.username !== originalUser.username ? "" : ""}
 Email: ${user.email} ${user.email !== originalUser.email ? "" : ""}
-${user.password !== originalUser.password ? `Password: ${"*".repeat(user.password.length)}` : ""}`.trim();
+Password: ${user.password} ${user.password !== originalUser.password ? "(changed)" : ""}`.trim();
+                                        // ${user.password !== originalUser.password ? `Password: ${"*".repeat(user.password.length)}` : ""}`.trim();
 
                                         Alert.alert(
                                             "Profile Update Confirmation",
                                             changesMessage,
                                             [
-                                                { text: "CANCLE", style: "cancel" },
+                                                { text: "CANCEL", style: "cancel" },
                                                 { text: "YES", onPress: () => handleSave() },
                                             ],
                                             { cancelable: true }
