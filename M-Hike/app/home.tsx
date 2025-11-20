@@ -133,12 +133,12 @@ export default function HomeScreen() {
                             </View>
 
                             <View style={styles.row}>
-                                <Text style={styles.label}>Length (metres):</Text>
+                                <Text style={styles.label}>Length of the hike (metres):</Text>
                                 <Text style={styles.value}>{item.length} m</Text>
                             </View>
 
                             <View style={styles.row}>
-                                <Text style={styles.label}>Date of Hike:</Text>
+                                <Text style={styles.label}>Date of the Hike:</Text>
                                 <Text style={styles.value}>{formatDate(item.dateOfHike)}</Text>
                             </View>
 
