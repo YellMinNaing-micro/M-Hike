@@ -181,7 +181,7 @@ export default function EntryRecordScreen() {
         if (!validateRequired()) return;
 
         Alert.alert(
-            "Create Confirmation",
+            "Save Confirmation",
             `Name of Hike: ${formData.name}
 Location: ${formData.location}
 Length: ${formData.length} metres
@@ -203,7 +203,7 @@ Additional Comments: ${additionalComments || "-"}
             [
                 { text: "Cancel", style: "cancel" },
                 {
-                    text: "Create",
+                    text: "SAVE",
                     onPress: async () => {
                         const entryData = {
                             ...formData,
@@ -258,7 +258,7 @@ Additional Comments: ${additionalComments || "-"}
             [
                 { text: "Cancel", style: "cancel" },
                 {
-                    text: "Update",
+                    text: "YES",
                     onPress: async () => {
                         const updatedData = {
                             ...formData,
@@ -289,12 +289,12 @@ Additional Comments: ${additionalComments || "-"}
 
     const confirmDelete = () => {
         Alert.alert(
-            "Delete",
-            "Are you sure you want to delete this record?",
+            "Delete Confirmation",
+            "Are you sure you want to delete this hike record?",
             [
-                { text: "Cancel", style: "cancel" },
+                { text: "CANCLE", style: "cancel" },
                 {
-                    text: "Delete",
+                    text: "DELETE",
                     style: "destructive",
                     onPress: async () => {
                         try {
