@@ -57,7 +57,7 @@ export default function ForgotPasswordScreen() {
 
             if (success) {
                 Alert.alert(" Password Reset Successful", "You can now log in.", [
-                    { text: "OK", onPress: () => router.push("/login") }
+                    { text: "OK", onPress: () => router.replace("/login") }
                 ]);
             } else {
                 Alert.alert(" User Not Found", "Check your username and email.");
@@ -78,7 +78,7 @@ export default function ForgotPasswordScreen() {
 
                     <View style={styles.subtitleRow}>
                         <Text style={styles.subtitle}>Remember your password? </Text>
-                        <TouchableOpacity onPress={() => router.push("/login")}>
+                        <TouchableOpacity onPress={() => router.replace("/login")}>
                             <Text style={styles.loginLink}>Login here.</Text>
                         </TouchableOpacity>
                     </View>
