@@ -22,67 +22,67 @@ export default function ProfileScreen() {
     const [showPassword, setShowPassword] = useState(false);
 
     // Load user from DB
-   useEffect(() => {
-    const loadUser = async () => {
-        const userId = await AsyncStorage.getItem("loggedInUserId");
+    useEffect(() => {
+        const loadUser = async () => {
+            const userId = await AsyncStorage.getItem("loggedInUserId");
 
-        if (!userId) return;
+            if (!userId) return;
 
-        const dbUser = await getUserById(Number(userId));
+            const dbUser = await getUserById(Number(userId));
 
-        if (dbUser) setUser(dbUser);
-    };
+            if (dbUser) setUser(dbUser);
+        };
 
-    loadUser();
-}, []);
+        loadUser();
+    }, []);
 
 
     // Save updated user
     const handleSave = async () => {
-    if (!user) return;
+        if (!user) return;
 
-    const { username, email, password } = user;
+        const { username, email, password } = user;
 
-    // EMPTY CHECK
-    if (!username || !email || !password) {
-        Alert.alert("⚠️ Missing Fields", "Please fill in all fields.");
-        return;
-    }
+        // EMPTY CHECK
+        if (!username || !email || !password) {
+            Alert.alert("⚠️ Missing Fields", "Please fill in all fields.");
+            return;
+        }
 
-    // EMAIL VALIDATION (@gmail.com only)
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-    if (!emailRegex.test(email)) {
-        Alert.alert("❌ Invalid Email", "Email must be a valid @gmail.com address.");
-        return;
-    }
+        // EMAIL VALIDATION (@gmail.com only)
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        if (!emailRegex.test(email)) {
+            Alert.alert("❌ Invalid Email", "Email must be a valid @gmail.com address.");
+            return;
+        }
 
-    // PASSWORD VALIDATION (same as register)
-    const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/;
-    const numberRegex = /\d/;
+        // PASSWORD VALIDATION (same as register)
+        const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/;
+        const numberRegex = /\d/;
 
-    if (!passwordRegex.test(password) || !numberRegex.test(password)) {
-        Alert.alert(
-            "❌ Invalid Password",
-            "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed"
-        );
-        return;
-    }
+        if (!passwordRegex.test(password) || !numberRegex.test(password)) {
+            Alert.alert(
+                "❌ Invalid Password",
+                "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed"
+            );
+            return;
+        }
 
-    // UPDATE USER IN DB
-    const success = await updateUser(user);
+        // UPDATE USER IN DB
+        const success = await updateUser(user);
 
-    if (success) {
-        Alert.alert("✅ Success", "Profile updated successfully");
-        setIsEditing(false);
-    } else {
-        Alert.alert("❌ Error", "Failed to update profile");
-    }
-};
+        if (success) {
+            Alert.alert("✅ Success", "Profile updated successfully");
+            setIsEditing(false);
+        } else {
+            Alert.alert("❌ Error", "Failed to update profile");
+        }
+    };
 
 
-    const handleLogout = async () =>{
+    const handleLogout = async () => {
         await AsyncStorage.removeItem("loggedInUserId");
-router.replace("/login");
+        router.replace("/login");
 
     }
 
@@ -94,10 +94,10 @@ router.replace("/login");
                     onPress={() => router.back()}
                     style={styles.iconButton}
                 >
-                    <Ionicons name="arrow-back-outline" size={26} color="#111827"/>
+                    <Ionicons name="arrow-back-outline" size={26} color="#111827" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Profile</Text>
-                <View style={{width: 26}}/>
+                <View style={{ width: 26 }} />
             </View>
 
             {/* CONTENT */}
@@ -110,7 +110,7 @@ router.replace("/login");
                                 style={styles.input}
                                 value={user.username?.toString() || ""}
                                 editable={isEditing}
-                                onChangeText={(text) => setUser({...user, username: text})}
+                                onChangeText={(text) => setUser({ ...user, username: text })}
                                 placeholder="Username"
                             />
 
@@ -119,7 +119,7 @@ router.replace("/login");
                                 style={styles.input}
                                 value={user.email?.toString() || ""}
                                 editable={isEditing}
-                                onChangeText={(text) => setUser({...user, email: text})}
+                                onChangeText={(text) => setUser({ ...user, email: text })}
                                 placeholder="Email"
                             />
 
@@ -129,7 +129,7 @@ router.replace("/login");
                                     style={styles.passwordInput}
                                     value={user.password?.toString() || ""}
                                     editable={isEditing}
-                                    onChangeText={(text) => setUser({...user, password: text})}
+                                    onChangeText={(text) => setUser({ ...user, password: text })}
                                     secureTextEntry={!showPassword}
                                     placeholder="Password"
                                     placeholderTextColor="#9CA3AF"
@@ -149,7 +149,20 @@ router.replace("/login");
                             {/* Buttons */}
                             <TouchableOpacity
                                 style={styles.button}
-                                onPress={() => router.push("/home")}
+                                onPress={() => {
+                                    Alert.alert(
+                                        "View All Records",
+                                        "Do you want to return to the full list of hike records?",
+                                        [
+                                            { text: "No", style: "cancel" },
+                                            {
+                                                text: "Yes",
+                                                onPress: () => router.push("/home"),
+                                            },
+                                        ],
+                                        { cancelable: true }
+                                    );
+                                }}
                             >
                                 <Text style={styles.buttonText}>Show All Hike Records</Text>
                             </TouchableOpacity>
@@ -163,8 +176,8 @@ router.replace("/login");
                                             "Confirm Update",
                                             "Are you sure you want to save the changes?",
                                             [
-                                                {text: "Cancel", style: "cancel"},
-                                                {text: "Yes", onPress: () => handleSave()},
+                                                { text: "Cancel", style: "cancel" },
+                                                { text: "Yes", onPress: () => handleSave() },
                                             ]
                                         );
                                     } else {
