@@ -192,7 +192,20 @@ export default function ProfileScreen() {
 
                             <TouchableOpacity
                                 style={styles.button}
-                                onPress={() => handleLogout()}
+                                onPress={() => {
+                                    Alert.alert(
+                                        "Logout Confirmation",
+                                        "Are you sure you want to log out?",
+                                        [
+                                            { text: "Cancel", style: "cancel" },
+                                            {
+                                                text: "Yes",
+                                                onPress: () => handleLogout(),
+                                            },
+                                        ]
+                                    );
+                                }}
+
                             >
                                 <Text style={styles.buttonText}>Log Out</Text>
                             </TouchableOpacity>
