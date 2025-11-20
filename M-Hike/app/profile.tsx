@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { getUserById, updateUser, } from "../lib/database";
+import { getUserById, updateUser } from "../lib/database";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -20,22 +20,21 @@ export default function ProfileScreen() {
     const [user, setUser] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [originalUser, setOriginalUser] = useState<any>(null);
 
     // Load user from DB
     useEffect(() => {
         const loadUser = async () => {
             const userId = await AsyncStorage.getItem("loggedInUserId");
-
             if (!userId) return;
-
             const dbUser = await getUserById(Number(userId));
-
-            if (dbUser) setUser(dbUser);
+            if (dbUser) {
+                setUser(dbUser);
+                setOriginalUser(dbUser); // store original for comparison
+            }
         };
-
         loadUser();
     }, []);
-
 
     // Save updated user
     const handleSave = async () => {
@@ -45,24 +44,23 @@ export default function ProfileScreen() {
 
         // EMPTY CHECK
         if (!username || !email || !password) {
-            Alert.alert(" Missing Fields", "Please fill in all fields.");
+            Alert.alert("Missing Fields", "Please fill in all fields.");
             return;
         }
 
         // EMAIL VALIDATION (@gmail.com only)
         const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
         if (!emailRegex.test(email)) {
-            Alert.alert(" Invalid Email", "Email must be a valid @gmail.com address.");
+            Alert.alert("Invalid Email", "Email must be a valid @gmail.com address.");
             return;
         }
 
-        // PASSWORD VALIDATION (same as register)
+        // PASSWORD VALIDATION
         const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/;
         const numberRegex = /\d/;
-
         if (!passwordRegex.test(password) || !numberRegex.test(password)) {
             Alert.alert(
-                " Invalid Password",
+                "Invalid Password",
                 "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed"
             );
             return;
@@ -72,19 +70,18 @@ export default function ProfileScreen() {
         const success = await updateUser(user);
 
         if (success) {
-            Alert.alert(" Success", "Profile updated successfully");
+            Alert.alert("Success", "Profile updated successfully");
             setIsEditing(false);
+            setOriginalUser(user); // update original for future comparisons
         } else {
-            Alert.alert(" Error", "Failed to update profile");
+            Alert.alert("Error", "Failed to update profile");
         }
     };
-
 
     const handleLogout = async () => {
         await AsyncStorage.removeItem("loggedInUserId");
         router.replace("/login");
-
-    }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -170,15 +167,20 @@ export default function ProfileScreen() {
                             <TouchableOpacity
                                 style={styles.button}
                                 onPress={() => {
-                                    if (isEditing) {
-                                        // Show confirmation before saving
+                                    if (isEditing && user && originalUser) {
+                                        // Build confirmation message
+                                        const changesMessage = `Username: ${user.username} ${user.username !== originalUser.username ? "" : ""}
+Email: ${user.email} ${user.email !== originalUser.email ? "" : ""}
+${user.password !== originalUser.password ? `Password: ${"*".repeat(user.password.length)}` : ""}`.trim();
+
                                         Alert.alert(
-                                            "Confirm Update",
-                                            "Are you sure you want to save the changes?",
+                                            "Profile Update Confirmation",
+                                            changesMessage,
                                             [
-                                                { text: "Cancel", style: "cancel" },
-                                                { text: "Yes", onPress: () => handleSave() },
-                                            ]
+                                                { text: "CANCLE", style: "cancel" },
+                                                { text: "YES", onPress: () => handleSave() },
+                                            ],
+                                            { cancelable: true }
                                         );
                                     } else {
                                         setIsEditing(true);
@@ -205,7 +207,6 @@ export default function ProfileScreen() {
                                         ]
                                     );
                                 }}
-
                             >
                                 <Text style={styles.buttonText}>Log Out</Text>
                             </TouchableOpacity>
