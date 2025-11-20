@@ -26,7 +26,7 @@ export default function ForgotPasswordScreen() {
 
         // --- REQUIRED VALIDATION ---
         if (!username || !email || !password) {
-            Alert.alert("⚠️ Missing Fields", "Please fill all fields.");
+            Alert.alert(" Missing Fields", "Please fill all fields.");
             return;
         }
 
@@ -34,7 +34,7 @@ export default function ForgotPasswordScreen() {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
         if (!emailRegex.test(email)) {
             Alert.alert(
-                "❌ Invalid Email",
+                " Invalid Email",
                 "Email must be a valid @gmail.com address."
             );
             return;
@@ -46,7 +46,7 @@ export default function ForgotPasswordScreen() {
 
         if (!passwordRegex.test(password) || !numberRegex.test(password)) {
             Alert.alert(
-                "❌ Invalid Password",
+                " Invalid Password",
                 "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed (optional)"
             );
             return;
@@ -56,15 +56,15 @@ export default function ForgotPasswordScreen() {
             const success = await updatePassword(username, email, password);
 
             if (success) {
-                Alert.alert("✅ Password Reset Successful", "You can now log in.", [
+                Alert.alert(" Password Reset Successful", "You can now log in.", [
                     { text: "OK", onPress: () => router.push("/login") }
                 ]);
             } else {
-                Alert.alert("❌ User Not Found", "Check your username and email.");
+                Alert.alert(" User Not Found", "Check your username and email.");
             }
         } catch (error) {
             console.error("Error resetting password:", error);
-            Alert.alert("❌ Error", "Something went wrong. Try again.");
+            Alert.alert(" Error", "Something went wrong. Try again.");
         }
     };
 
