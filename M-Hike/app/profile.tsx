@@ -88,7 +88,7 @@ export default function ProfileScreen() {
             {/* HEADER */}
             <View style={styles.header}>
                 <TouchableOpacity
-                    onPress={() => router.back()}
+                    onPress={() => router.replace("/home")}
                     style={styles.iconButton}
                 >
                     <Ionicons name="arrow-back-outline" size={26} color="#111827" />
@@ -154,7 +154,7 @@ export default function ProfileScreen() {
                                             { text: "No", style: "cancel" },
                                             {
                                                 text: "Yes",
-                                                onPress: () => router.push("/home"),
+                                                onPress: () => router.replace("/home"),
                                             },
                                         ],
                                         { cancelable: true }
