@@ -217,7 +217,7 @@ Additional Comments: ${additionalComments || "-"}
 
                         try {
                             await insertEntry(entryData);
-                            Alert.alert("Success", "✅ Record created successfully!", [
+                            Alert.alert("Success", "Record created successfully!", [
                                 { text: "OK", onPress: () => router.replace("/home") },
                             ]);
                         } catch (err) {
@@ -272,7 +272,7 @@ Additional Comments: ${additionalComments || "-"}
 
                         try {
                             await updateEntry(Number(id), updatedData);
-                            Alert.alert("Success", "✅ Record updated successfully!", [
+                            Alert.alert("Success", "Record updated successfully!", [
                                 { text: "OK", onPress: () => router.replace("/home") },
                             ]);
                         } catch (err) {
@@ -299,7 +299,7 @@ Additional Comments: ${additionalComments || "-"}
                     onPress: async () => {
                         try {
                             await deleteEntry(Number(id));
-                            Alert.alert("Deleted", "🗑️ Record deleted successfully!", [
+                            Alert.alert("Deleted", "Record deleted successfully!", [
                                 { text: "OK", onPress: () => router.replace("/home") },
                             ]);
                         } catch (err) {
@@ -619,8 +619,9 @@ Additional Comments: ${additionalComments || "-"}
                         <TextInput
                             style={styles.input}
                             value={timeOfObservation}
-                            editable={false} // keep non-editable like original
+                            editable={editable}
                             placeholderTextColor="#9CA3AF"
+                            onChangeText={setTimeOfObservation}
                         />
 
                         {/* Additional Comments */}
@@ -673,7 +674,20 @@ Additional Comments: ${additionalComments || "-"}
 
                     <TouchableOpacity
                         style={[styles.showRecordButton, { marginTop: 10 }]}
-                        onPress={() => router.push("/home")}
+                        onPress={() => {
+                            Alert.alert(
+                                "View All Records",
+                                "Do you want to return to the full list of hike records?",
+                                [
+                                    { text: "No", style: "cancel" },
+                                    {
+                                        text: "Yes",
+                                        onPress: () => router.push("/home"),
+                                    },
+                                ],
+                                { cancelable: true }
+                            );
+                        }}
                     >
                         <Text style={styles.submitText}>Show All Records</Text>
                     </TouchableOpacity>
