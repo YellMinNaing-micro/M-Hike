@@ -46,11 +46,6 @@ export default function EntryRecordScreen() {
     const [additionalComments, setAdditionalComments] = useState("");
     const [dateOfHike, setDateOfHike] = useState(new Date());
 
-    const allowAlphaNumeric = (text: string) => {
-        return text.replace(/[^a-zA-Z0-9 ]/g, ""); // letters, numbers, and spaces only
-    };
-
-
     const [formData, setFormData] = useState<EntryFormData>({
         name: "",
         location: "",
@@ -577,7 +572,7 @@ Additional Comments: ${additionalComments || "-"}
                                 editable={editable}
                                 value={formData.animalSightings}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, animalSightings: allowAlphaNumeric(text) })
+                                    setFormData({ ...formData, animalSightings: allowTextOnly(text) })
                                 }
                             />
 
@@ -589,7 +584,7 @@ Additional Comments: ${additionalComments || "-"}
                                 editable={editable}
                                 value={formData.vegetation}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, vegetation: allowAlphaNumeric(text) })
+                                    setFormData({ ...formData, vegetation: allowTextOnly(text) })
                                 }
                             />
 
@@ -601,7 +596,7 @@ Additional Comments: ${additionalComments || "-"}
                                 editable={editable}
                                 value={formData.weather}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, weather: allowAlphaNumeric(text) })
+                                    setFormData({ ...formData, weather: allowTextOnly(text) })
                                 }
                             />
 
@@ -613,7 +608,7 @@ Additional Comments: ${additionalComments || "-"}
                                 editable={editable}
                                 value={formData.trail}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, trail: allowAlphaNumeric(text) })
+                                    setFormData({ ...formData, trail: allowTextOnly(text) })
                                 }
                             />
                         </View>
