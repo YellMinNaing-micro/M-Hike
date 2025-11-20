@@ -26,29 +26,29 @@ export default function LoginScreen() {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async () => {
-    if (!username || !email || !password) {
-        Alert.alert("⚠️ Missing Fields", "Please fill out all fields.");
-        return;
-    }
+        if (!username || !email || !password) {
+            Alert.alert(" Missing Fields", "Please fill out all fields.");
+            return;
+        }
 
-    // EMAIL VALIDATION (@gmail.com only)
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-    if (!emailRegex.test(email)) {
-        Alert.alert("❌ Invalid Email", "Email must be a valid @gmail.com address.");
-        return;
-    }
+        // EMAIL VALIDATION (@gmail.com only)
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        if (!emailRegex.test(email)) {
+            Alert.alert(" Invalid Email", "Email must be a valid @gmail.com address.");
+            return;
+        }
 
-    // PASSWORD VALIDATION (same as register)
-    const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/;
-    const numberRegex = /\d/;
+        // PASSWORD VALIDATION (same as register)
+        const passwordRegex = /^[A-Z][A-Za-z0-9!@#$%^&*()_\-+=<>?/{}~]{7,}$/;
+        const numberRegex = /\d/;
 
-    if (!passwordRegex.test(password) || !numberRegex.test(password)) {
-        Alert.alert(
-            "❌ Invalid Password",
-            "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed (optional)"
-        );
-        return;
-    }
+        if (!passwordRegex.test(password) || !numberRegex.test(password)) {
+            Alert.alert(
+                " Invalid Password",
+                "Password must:\n• Start with a capital letter\n• Be at least 8 characters\n• Contain at least one number\n• Special characters allowed (optional)"
+            );
+            return;
+        }
 
         try {
             await logAllUsers();
@@ -56,31 +56,31 @@ export default function LoginScreen() {
 
             if (user) {
                 // @ts-ignore
-                  await AsyncStorage.setItem("loggedInUserId", user.id.toString());
+                await AsyncStorage.setItem("loggedInUserId", user.id.toString());
                 // @ts-ignore
-                Alert.alert("✅ Login Successful", `Welcome, ${user.username}!`, [
-                    {text: "OK", onPress: () => router.replace("/entry-record")}, // navigate to your home screen
+                Alert.alert(" Login Successful", `Welcome, ${user.username}!`, [
+                    { text: "OK", onPress: () => router.replace("/entry-record") }, // navigate to your home screen
                 ]);
 
 
-            // clear input fields
-            setUsername("");
-            setEmail("");
-            setPassword("");
-        } else {
-            Alert.alert("❌ Invalid Credentials", "Username, email, or password is incorrect.");
+                // clear input fields
+                setUsername("");
+                setEmail("");
+                setPassword("");
+            } else {
+                Alert.alert("❌ Invalid Credentials", "Username, email, or password is incorrect.");
+            }
+        } catch (error) {
+            console.error("Login Error:", error);
+            Alert.alert(" Error", "Something went wrong while logging in.");
         }
-    } catch (error) {
-        console.error("Login Error:", error);
-        Alert.alert("❌ Error", "Something went wrong while logging in.");
-    }
-};
+    };
 
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-                <StatusBar style="dark" backgroundColor="#E0F0FF"/>
+                <StatusBar style="dark" backgroundColor="#E0F0FF" />
 
                 <View style={styles.card}>
                     <Text style={styles.title}>Log In</Text>
@@ -147,10 +147,10 @@ export default function LoginScreen() {
 
                     <View style={styles.socialRow}>
                         <TouchableOpacity>
-                            <Ionicons name="logo-google" size={28} color="#EA4335"/>
+                            <Ionicons name="logo-google" size={28} color="#EA4335" />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Ionicons name="logo-facebook" size={28} color="#1877F2"/>
+                            <Ionicons name="logo-facebook" size={28} color="#1877F2" />
                         </TouchableOpacity>
                     </View>
 
@@ -182,9 +182,9 @@ const styles = StyleSheet.create({
         elevation: 5,
         alignItems: "center",
     },
-    title: {fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 5},
-    subtitle: {fontSize: 14, color: "#6B7280"},
-    signup: {color: "#4F46E5", fontWeight: "600"},
+    title: { fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 5 },
+    subtitle: { fontSize: 14, color: "#6B7280" },
+    signup: { color: "#4F46E5", fontWeight: "600" },
     inputBox: {
         width: "100%",
         marginBottom: 15,
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         position: "relative",
     },
-    input: {height: 45, color: "#111827"},
+    input: { height: 45, color: "#111827" },
     eyeIcon: {
         position: "absolute",
         right: 10,
@@ -218,8 +218,8 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         marginBottom: 15,
     },
-    loginText: {color: "#fff", fontWeight: "600", fontSize: 16},
-    loginWith: {color: "#6B7280", marginBottom: 10},
+    loginText: { color: "#fff", fontWeight: "600", fontSize: 16 },
+    loginWith: { color: "#6B7280", marginBottom: 10 },
     socialRow: {
         flexDirection: "row",
         justifyContent: "center",
