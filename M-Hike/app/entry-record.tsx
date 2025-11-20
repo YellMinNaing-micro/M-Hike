@@ -46,6 +46,11 @@ export default function EntryRecordScreen() {
     const [additionalComments, setAdditionalComments] = useState("");
     const [dateOfHike, setDateOfHike] = useState(new Date());
 
+    const allowAlphaNumeric = (text: string) => {
+        return text.replace(/[^a-zA-Z0-9 ]/g, ""); // letters, numbers, and spaces only
+    };
+
+
     const [formData, setFormData] = useState<EntryFormData>({
         name: "",
         location: "",
@@ -121,7 +126,7 @@ export default function EntryRecordScreen() {
 
     const handleClearAll = () => {
         // Only allow clear when creating a new record
-        if (id) {
+        if (!editable) {
             Alert.alert("Not Allowed", "You can only clear fields while creating a new record.");
             return;
         }
@@ -341,9 +346,6 @@ Additional Comments: ${additionalComments || "-"}
                         >
                             <View style={styles.headerRow}>
                                 <View>
-                                    {/*<Text style={styles.welcomeText}>*/}
-                                    {/*    Welcome, {user ? user.username : "Loading..."}!*/}
-                                    {/*</Text>*/}
                                     <Text style={styles.headerTitle}>
                                         {id ? "Hike Record Detail" : "Add New Hike Record"}
                                     </Text>
@@ -359,17 +361,17 @@ Additional Comments: ${additionalComments || "-"}
                     >
                         <PopoverArrow />
                         <TouchableOpacity
-                            onPress={!id ? handleClearAll : undefined}
-                            disabled={!!id}
+                            onPress={editable ? handleClearAll : undefined}
+                            disabled={!editable}
                             style={{
                                 paddingVertical: 6,
                                 paddingHorizontal: 10,
-                                opacity: id ? 0.4 : 1,
+                                opacity: editable ? 1 : 0.4, // grey out if not editable
                             }}
                         >
                             <Text
                                 style={{
-                                    color: id ? "#9CA3AF" : "#ef1717",
+                                    color: editable ? "#ef1717" : "#9CA3AF",
                                     fontWeight: "600",
                                     fontSize: 15,
                                 }}
@@ -379,6 +381,8 @@ Additional Comments: ${additionalComments || "-"}
                         </TouchableOpacity>
                     </PopoverContent>
                 </Popover>
+
+
 
                 {/* Form */}
                 <View style={styles.formBox}>
@@ -573,7 +577,7 @@ Additional Comments: ${additionalComments || "-"}
                                 editable={editable}
                                 value={formData.animalSightings}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, animalSightings: text })
+                                    setFormData({ ...formData, animalSightings: allowAlphaNumeric(text) })
                                 }
                             />
 
@@ -585,7 +589,7 @@ Additional Comments: ${additionalComments || "-"}
                                 editable={editable}
                                 value={formData.vegetation}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, vegetation: text })
+                                    setFormData({ ...formData, vegetation: allowAlphaNumeric(text) })
                                 }
                             />
 
@@ -597,7 +601,7 @@ Additional Comments: ${additionalComments || "-"}
                                 editable={editable}
                                 value={formData.weather}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, weather: text })
+                                    setFormData({ ...formData, weather: allowAlphaNumeric(text) })
                                 }
                             />
 
@@ -609,7 +613,7 @@ Additional Comments: ${additionalComments || "-"}
                                 editable={editable}
                                 value={formData.trail}
                                 onChangeText={(text) =>
-                                    setFormData({ ...formData, trail: text })
+                                    setFormData({ ...formData, trail: allowAlphaNumeric(text) })
                                 }
                             />
                         </View>
