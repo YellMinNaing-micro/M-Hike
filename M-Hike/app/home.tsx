@@ -76,14 +76,14 @@ export default function HomeScreen() {
                 <View style={styles.headerIcons}>
                     <TouchableOpacity
                         style={styles.iconButton}
-                        onPress={() => router.push("/profile")}
+                        onPress={() => router.replace("/profile")}
                     >
                         <Ionicons name="person-circle-outline" size={26} color="#616161" />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         style={styles.iconButton}
-                        onPress={() => router.push("/entry-record")}
+                        onPress={() => router.replace("/entry-record")}
                     >
                         <Ionicons name="add-circle-outline" size={26} color="#616161" />
                     </TouchableOpacity>
@@ -151,7 +151,7 @@ export default function HomeScreen() {
                                         `Are you sure you want to view details for "${item.name}"?`,
                                         [
                                             { text: "Cancel", style: "cancel" },
-                                            { text: "Yes", onPress: () => router.push(`/entry-record?id=${item.id}`) }
+                                            { text: "Yes", onPress: () => router.replace(`/entry-record?id=${item.id}`) }
                                         ],
                                         { cancelable: true }
                                     )
