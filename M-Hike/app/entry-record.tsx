@@ -682,7 +682,7 @@ Additional Comments: ${additionalComments || "-"}
                                     { text: "No", style: "cancel" },
                                     {
                                         text: "Yes",
-                                        onPress: () => router.push("/home"),
+                                        onPress: () => router.replace("/home"),
                                     },
                                 ],
                                 { cancelable: true }
